@@ -1,7 +1,12 @@
-name: Create Zip Package
-on: [push]
+name: Create and Upload Zip Package
+
+on:
+  push:
+    branches:
+      - main
+      
 jobs:
-  build:
+  create-zip:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -11,8 +16,23 @@ jobs:
         run: |
           find . -type d \( -name .git -o -name .github \) -prune -o -type f -print | xargs zip DelBuonoPaolini_Alberto_Esercizi.zip
 
-      - name: 🚀 Upload .zip as artifact
+      - name: ⬆ Upload .zip as artifact
         uses: actions/upload-artifact@v2
         with:
           name: DelBuonoPaolini_Alberto_Esercizi
-          path: './DelBuonoPaolini_Alberto_Esercizi.zip'
+          path: DelBuonoPaolini_Alberto_Esercizi.zip
+          
+  release:
+    needs: create-zip
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: 🚀 Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: DelBuonoPaolini_Alberto_Esercizi.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
