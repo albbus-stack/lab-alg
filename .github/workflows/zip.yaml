@@ -9,3 +9,9 @@ jobs:
         uses: byteever/action-build-zip@master
         with:
           filename: 'DelBuonoPaolini_Alberto_Esercizi.zip'
+
+      - name: 🚀 Upload .zip as artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: DelBuonoPaolini_Alberto_Esercizi
+          path: DelBuonoPaolini_Alberto_Esercizi.zip
