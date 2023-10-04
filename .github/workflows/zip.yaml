@@ -14,4 +14,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: DelBuonoPaolini_Alberto_Esercizi
-          path: DelBuonoPaolini_Alberto_Esercizi.zip
+          path: './DelBuonoPaolini_Alberto_Esercizi.zip'
