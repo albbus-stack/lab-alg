@@ -4,11 +4,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout Code
+        uses: actions/checkout@master
+        
       - name: 📦 Generate .zip
-        uses: byteever/action-build-zip@master
-        with:
-          filename: 'DelBuonoPaolini_Alberto_Esercizi.zip'
+        run: |
+          find . -type d \( -name .git -o -name .github \) -prune -o -type f -print | xargs zip DelBuonoPaolini_Alberto_Esercizi.zip
 
       - name: 🚀 Upload .zip as artifact
         uses: actions/upload-artifact@v2
