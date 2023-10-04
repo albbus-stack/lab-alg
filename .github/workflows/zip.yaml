@@ -29,6 +29,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+      - name: Set up Git
+        run: git config --global user.email "github-actions@github.com" && git config --global user.name "GitHub Actions"
+
+      - name: Create Tag
+        run: git tag -a v1.0 -m "Zip package"
+
+      - name: Push Tag
+        run: git push --follow-tags
+
       - name: 🚀 Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
