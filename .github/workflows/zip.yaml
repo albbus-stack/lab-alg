@@ -33,10 +33,7 @@ jobs:
         run: git config --global user.email "github-actions@github.com" && git config --global user.name "GitHub Actions"
 
       - name: Create Tag
-        run: git tag -a v1.0 -m "Zip package"
-
-      - name: Push Tag
-        run: git push --follow-tags
+        run: git tag -a v1.0 -m "Zip package" && git push --follow-tags
 
       - name: 🚀 Create Release
         id: create_release
