@@ -17,7 +17,7 @@ jobs:
           find . -type d \( -name .git -o -name .github \) -prune -o -type f -print | xargs zip DelBuonoPaolini_Alberto_Esercizi.zip
 
       - name: ⬆ Upload .zip as artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: DelBuonoPaolini_Alberto_Esercizi
           path: DelBuonoPaolini_Alberto_Esercizi.zip
