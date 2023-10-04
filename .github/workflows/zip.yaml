@@ -12,12 +12,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@master
         
-      - name: 📦 Generate .zip
-        run: |
-          find . -type d \( -name .git -o -name .github \) -prune -o -type f -print | xargs zip DelBuonoPaolini_Alberto_Esercizi.zip
-
-      - name: ⬆ Upload .zip as artifact
+      - name: 🚀 Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: DelBuonoPaolini_Alberto_Esercizi
-          path: DelBuonoPaolini_Alberto_Esercizi.zip
+          path: |
+            scripts/*
+            latex/*
+            esercizio.ipynb
