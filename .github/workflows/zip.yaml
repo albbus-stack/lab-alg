@@ -17,6 +17,7 @@ jobs:
         with:
           name: DelBuonoPaolini_Alberto_Esercizi
           path: |
+            !.gitignore
             scripts/*
             latex/*
             esercizio.ipynb

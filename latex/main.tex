@@ -1,1 +1,151 @@
+% DOCUMENT SETUP %
 
+\documentclass[twocolumn]{article}
+\usepackage[italian]{babel}
+
+\usepackage{tgschola}
+\linespread{1.25}
+\usepackage[fontsize=12pt]{scrextend}
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=3cm,right=3cm,marginparwidth=1.75cm,footskip=1.25cm,heightrounded]{geometry}
+
+\usepackage{xcolor}
+\definecolor{linkColor}{RGB}{2,11,120}
+\usepackage[colorlinks=true, allcolors=linkColor]{hyperref}
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[fencedCode]{markdown}
+
+\usepackage{subfig}
+\graphicspath{ {./images/} }
+
+% HEADERS %
+
+\title{Relazione Laboratorio Algoritmi}
+\author{Alberto Del Buono Paolini}
+\date{Ottobre 2023}
+
+\begin{document}
+
+\begin{onecolumn}
+\maketitle
+\tableofcontents
+\vspace{10cm}
+\end{onecolumn}
+\pagebreak
+
+% CONTENT %
+
+\begin{markdown}
+# Introduzione
+
+Questo studio mira a confrontare diverse implementazioni di statistiche d'ordine dinamiche, mettendo a confronto tre approcci principali: utilizzo di una lista ordinata, di un Albero Binario di Ricerca (ABR) senza attributo size e di un ABR come discusso nelle lezioni. L'obiettivo è valutare le prestazioni e le caratteristiche di ciascuna implementazione attraverso test ed esperimenti pratici.
+
+La soluzione più performante tra le tre opzioni dipenderà da vari fattori, tra cui il tipo di operazioni che intendi eseguire con maggiore frequenza, la dimensione dei dati con cui stai lavorando e le specifiche esigenze del tuo problema. Di seguito fornisco alcune considerazioni generali:
+
+1. **Lista Ordinata**:
+       - Vantaggi: L'implementazione con una lista ordinata può essere efficiente per inserimenti e rimozioni, specialmente quando si lavora con piccoli insiemi di dati. Le operazioni di ricerca delle statistiche d'ordine possono essere efficienti in questo caso.
+       - Svantaggi: L'ordinamento della lista dopo ogni inserimento potrebbe richiedere tempo, rendendo l'implementazione meno efficiente con insiemi di dati molto grandi.
+
+2. **Albero Binario di Ricerca (ABR) senza attributo *size***:
+       - Vantaggi: Gli ABR possono essere efficienti per inserimenti, rimozioni e calcolo delle statistiche d'ordine. Mantengono naturalmente gli elementi in ordine e possono essere efficienti anche con dati di grandi dimensioni.
+       - Svantaggi: Senza l'attributo *size*, il calcolo delle statistiche può richiedere tempo lineare e potrebbero verificarsi problemi di bilanciamento dell'albero in caso di inserimenti o rimozioni frequenti.
+
+3. **Albero Rosso-Nero (RN) con attributo *size***:
+       - Vantaggi: Gli alberi Rosso-Neri con l'attributo *size* possono essere altamente efficienti per calcolare le statistiche d'ordine, poiché possono determinare rapidamente il rango di un elemento. Mantengono un buon bilanciamento dell'albero e sono adatti per insiemi di dati di qualsiasi dimensione.
+       - Svantaggi: Potrebbero richiedere un po' più di tempo per inserimenti e rimozioni rispetto a una lista ordinata, ma in genere sono molto efficienti.
+
+In generale, se il calcolo delle statistiche d'ordine è una parte critica del tuo problema e se prevedi di eseguire molte operazioni di questo tipo, l'implementazione con un Albero Rosso-Nero con l'attributo *size* potrebbe essere la soluzione più performante. Tuttavia, è sempre importante condurre test specifici sul tuo set di dati e sulle operazioni che prevedi di eseguire per determinare quale implementazione sia la migliore per il tuo caso d'uso.
+
+# Caratteristiche Teoriche
+
+## Lista Ordinata
+
+L'implementazione con lista ordinata utilizza una struttura dati basata su una lista concatenata con puntatori. In questa struttura, gli elementi vengono inseriti in modo che siano mantenuti in ordine crescente o decrescente, a seconda della specifica implementazione. Questo comporta che l'inserimento di un nuovo elemento richieda l'individuazione della posizione corretta in cui inserirlo in modo che l'ordine sia conservato. Le operazioni di ricerca in una lista ordinata sono relativamente efficienti poiché è possibile sfruttare l'ordine degli elementi per effettuare ricerche binarie, riducendo il tempo di ricerca rispetto a una lista non ordinata.
+
+Tuttavia, l'inserimento e la rimozione possono essere più costosi in termini di tempo rispetto a una struttura dati come un ABR, in quanto richiedono spostamenti e aggiornamenti dei puntatori per mantenere l'ordine. La complessità di queste operazioni può dipendere dalla dimensione della lista e dalla posizione dell'elemento da inserire o rimuovere.
+
+## ABR Senza Attributo Size
+
+L'Albero Binario di Ricerca (ABR) è una struttura dati in cui ogni nodo ha al massimo due figli: uno a sinistra contenente valori inferiori e uno a destra contenente valori superiori rispetto al nodo padre. L'ABR senza l'attributo size utilizza questa struttura per organizzare gli elementi in modo che gli elementi più piccoli siano situati nei sottoalberi sinistri e quelli più grandi nei sottoalberi destri.
+
+Le operazioni di inserimento, ricerca e rimozione in un ABR senza attributo size dipendono dalla struttura dell'albero. In particolare, la loro complessità può variare in base all'equilibrio dell'albero. Se l'albero è bilanciato (ad esempio, un albero AVL), le operazioni possono essere efficienti, ma se l'albero è sbilanciato, la complessità può aumentare.
+
+## ABR Con Attributo Size
+
+L'ABR con attributo size è una variante dell'ABR in cui ogni nodo include un attributo size che rappresenta il numero di nodi presenti nel sottoalbero radicato in quel nodo. Questo attributo permette di calcolare statistiche d'ordine come la mediana o il k-esimo elemento più piccolo in modo più efficiente, poiché consente di individuare la posizione degli elementi all'interno dell'albero senza dover attraversare tutti i nodi.
+
+Le operazioni di ricerca basate su statistiche d'ordine, come la ricerca del k-esimo elemento più piccolo o il calcolo del rango di un elemento, sono notevolmente semplificate in un ABR con attributo size rispetto alle altre implementazioni. Tuttavia, l'inserimento e la rimozione possono richiedere una maggiore manutenzione dell'attributo size, che potrebbe comportare un lieve aumento della complessità rispetto all'ABR senza attributo size.
+
+In conclusione, ciascuna delle tre implementazioni ha le proprie caratteristiche teoriche uniche che influiscono sulle prestazioni delle operazioni di inserimento, ricerca, rimozione e calcolo delle statistiche d'ordine. Gli esperimenti condotti forniranno dati concreti per valutare queste differenze nelle prestazioni.
+
+# Valutazione a Priori delle Prestazioni
+
+## Lista Ordinata
+Le prestazioni della lista ordinata possono essere suddivise in base al tipo di operazione considerata:
+
+- **Inserimento**: L'inserimento di un elemento in una lista ordinata richiede una scansione degli elementi esistenti per individuare la posizione corretta. La complessità di questa operazione è solitamente O(n) nel caso peggiore, dove n è il numero di elementi nella lista. Tuttavia, se si utilizza una ricerca binaria, è possibile ridurre la complessità a O(log n) per l'inserimento.
+  
+- **Ricerca**: La ricerca in una lista ordinata è generalmente efficiente grazie all'ordinamento degli elementi. Utilizzando una ricerca binaria, la complessità della ricerca può essere mantenuta a O(log n), rendendo questa operazione molto efficiente per grandi insiemi di dati.
+  
+- **Rimozione**: La rimozione di un elemento da una lista ordinata richiede l'individuazione dell'elemento da rimuovere e l'aggiornamento dei puntatori dei nodi precedenti e successivi. La complessità è O(n) nel caso peggiore, ma può essere ridotta a O(log n) utilizzando una ricerca binaria.
+
+## ABR Senza Attributo Size
+Le prestazioni di un ABR senza attributo size dipendono dalla struttura dell'albero:
+
+- **Inserimento**: L'inserimento in un ABR può variare dalla complessità O(log n) nel caso migliore (quando l'albero è bilanciato) fino a O(n) nel caso peggiore (quando l'albero è sbilanciato). Le prestazioni possono essere migliorate utilizzando alberi bilanciati come gli alberi AVL o alberi rosso-neri.
+  
+- **Ricerca**: La ricerca in un ABR è generalmente efficiente, con una complessità media di O(log n). Tuttavia, nel caso peggiore (albero sbilanciato), la complessità può essere O(n).
+  
+- **Rimozione**: La rimozione da un ABR segue una logica simile all'inserimento, con complessità che varia da O(log n) a O(n) a seconda della struttura dell'albero.
+
+## ABR Con Attributo Size
+Un ABR con attributo size introduce un miglioramento significativo nelle operazioni di ricerca basate su statistiche d'ordine:
+
+- **Inserimento**: L'inserimento in un ABR con attributo size è simile a quello di un ABR senza attributo size, ma con un piccolo overhead aggiuntivo per l'aggiornamento dell'attributo size dei nodi durante l'inserimento. La complessità rimane O(log n) nel caso migliore (con albero bilanciato).
+  
+- **Ricerca basata su Statistiche d'Ordine**: La ricerca di statistiche d'ordine come il k-esimo elemento più piccolo o il rango di un elemento diventa molto efficiente in un ABR con attributo size. Queste operazioni possono essere eseguite in O(log n), il che è notevolmente più veloce rispetto a una lista ordinata o a un ABR senza attributo size.
+
+In generale, ci si aspetta che un ABR con attributo size eccella nelle operazioni di ricerca basate su statistiche d'ordine, mentre potrebbe essere leggermente meno efficiente nelle operazioni di inserimento e rimozione rispetto a un ABR senza attributo size. Tuttavia, l'efficienza dipende anche dalla struttura dell'albero e dalla sua capacità di mantenere un buon bilanciamento. Gli esperimenti permetteranno di confermare queste previsioni e fornire dati empirici sulle prestazioni.
+
+# Descrizione degli Esperimenti
+In questa sezione, delineeremo in dettaglio gli esperimenti che verranno condotti. Non ci limiteremo a un semplice elenco, ma spiegheremo il motivo dietro ciascun esperimento e come verrà misurato il suo successo.
+
+1. **Strategia di Iterazione**:
+   - Puoi eseguire iterazioni su un insieme di dati in diversi modi, ad esempio:
+     - Iterazione casuale: Esegui le operazioni in modo casuale sugli elementi dell'insieme di dati. Questo è utile per valutare le prestazioni in scenari realistici in cui le operazioni potrebbero essere distribuite in modo casuale nel tempo.
+     - Iterazione crescente o decrescente: Esegui le operazioni in ordine crescente o decrescente rispetto ai valori degli elementi. Questo può aiutarti a valutare le prestazioni quando le operazioni seguono un ordine specifico.
+     - Iterazione mista: Combina l'iterazione casuale con l'iterazione crescente o decrescente per coprire una varietà di scenari.
+
+2. **Dimensioni delle Strutture Dati**:
+   - Esegui i tuoi test su diverse dimensioni delle strutture dati per valutare come le prestazioni variano con l'aumento del numero di elementi nell'insieme di dati. Ad esempio, puoi testare le prestazioni su insiemi di dati di dimensioni 10, 100, 1000, ecc.
+   - Assicurati di considerare sia casi di piccole dimensioni che casi di grandi dimensioni, poiché le prestazioni possono differire notevolmente in base alle dimensioni dell'insieme di dati.
+
+3. **Ripetizioni dei Test**:
+   - Per ottenere risultati affidabili, esegui ciascun test più volte e calcola la media dei tempi di esecuzione. Questo ridurrà l'impatto di variazioni casuali e fornirà risultati più stabili.
+   - Puoi anche calcolare la deviazione standard o l'intervallo di confidenza per misurare la variabilità dei risultati.
+
+4. **Randomizzazione**:
+   - L'uso di dati casuali durante i test può essere utile per valutare le prestazioni in scenari realistici, ma assicurati di registrare i semi (seed) dei generatori casuali utilizzati nei test in modo da poter riprodurre i risultati in futuro, se necessario.
+
+5. **Misurazione delle Prestazioni**:
+   - Utilizza strumenti appropriati per misurare con precisione i tempi di esecuzione delle operazioni. Ad esempio, puoi utilizzare la libreria `timeit` in Python.
+
+# Documentazione del Codice
+Forniremo documentazione soprattutto delle implementazioni delle statistiche d'ordine dinamiche per tutte e tre le strutture dati.
+
+# Analisi dei Risultati Sperimentali
+In questa sezione, condurremo un'analisi completa dei risultati sperimentali. Discuteremo le discrepanze tra le prestazioni attese e quelle effettivamente osservate, se presenti, e offriremo interpretazioni basate sui dati raccolti.
+
+# Conclusioni
+Concluderemo la relazione con un riepilogo delle scoperte chiave e delle implicazioni dei risultati sperimentali. Discuteremo anche eventuali sviluppi futuri e possibili miglioramenti.
+\end{markdown}
+
+\newpage
+
+\include{tabelle-lista-ordinata}
+\include{tabelle-abr}
+\include{tabelle-rn-aumentato}
+
+\end{document}
+-
