@@ -155,8 +155,7 @@ if __name__ == "__main__":
         _os_select_times = []
         _os_rank_times = []
 
-        for i in range(20):
-            print('Dimensione:', size, 'Iterazione:', i+1)
+        for _ in range(20):
             binary_search_tree = BinarySearchTree()
             
             [elapsed_time, data] = test_abr_insertion(size, binary_search_tree)

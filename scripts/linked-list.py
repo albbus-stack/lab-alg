@@ -1,6 +1,6 @@
 import random
 from timeit import default_timer as timer
-from utils import plot_and_table
+import matplotlib.pyplot as plt
 
 class Node:
     def __init__(self, data):
@@ -123,19 +123,37 @@ if __name__ == "__main__":
     os_rank_times = []
 
     for size in sizes:
-        ordered_list = OrderedLinkedList()
+        _insertion_times = []
+        _removal_times = []
+        _os_select_times = []
+        _os_rank_times = []
 
-        [elapsed_time, data] = test_insertion(size, ordered_list)
-        insertion_times.append(elapsed_time)
+        for _ in range(20):
+            ordered_list = OrderedLinkedList()
 
-        elapsed_time = test_os_select(size, ordered_list)
-        os_select_times.append(elapsed_time)
+            [elapsed_time, data] = test_insertion(size, ordered_list)
+            _insertion_times.append(elapsed_time)
 
-        elapsed_time = test_os_rank(ordered_list, data)
-        os_rank_times.append(elapsed_time)
+            elapsed_time = test_os_select(size, ordered_list)
+            _os_select_times.append(elapsed_time)
 
-        elapsed_time = test_removal(ordered_list, data)
-        removal_times.append(elapsed_time)
+            elapsed_time = test_os_rank(ordered_list, data)
+            _os_rank_times.append(elapsed_time)
+
+            elapsed_time = test_removal(ordered_list, data)
+            _removal_times.append(elapsed_time)
+
+        mean = sum(_insertion_times) / len(_insertion_times)
+        insertion_times.append(mean)
+
+        mean = sum(_os_select_times) / len(_os_select_times)
+        os_select_times.append(mean)
+
+        mean = sum(_os_rank_times) / len(_os_rank_times)
+        os_rank_times.append(mean)
+
+        mean = sum(_removal_times) / len(_removal_times)
+        removal_times.append(mean)
 
     it = plot_and_table(sizes, insertion_times, caption="Inserimento in una lista ordinata", time_caption="Tempo di inserimento (s)")
     rt = plot_and_table(sizes, removal_times, caption="Rimozione in una lista ordinata", time_caption="Tempo di rimozione (s)")
