@@ -43,7 +43,7 @@ def plot_and_table(sizes, times, caption: str, std=None, plot_filename=None):
 
     # Salva il grafico come immagine nella directory "images"
     if plot_filename:
-        images_dir = "images"
+        images_dir = "../latex/images"
         if not os.path.exists(images_dir):
             os.makedirs(images_dir)
         plt.savefig(os.path.join(images_dir, plot_filename), bbox_inches='tight')
