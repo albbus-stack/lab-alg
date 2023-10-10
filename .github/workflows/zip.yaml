@@ -19,5 +19,6 @@ jobs:
           path: |
             !.gitignore
             scripts/*
+            !scripts/requirements.txt
             latex/*
             esercizio.ipynb
