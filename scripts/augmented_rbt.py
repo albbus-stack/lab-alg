@@ -3,6 +3,7 @@ from timeit import default_timer as timer
 import numpy as np
 import utils
 import statistics
+from typing import Optional
 from enum import Enum
 
 class Color(Enum):
@@ -10,21 +11,21 @@ class Color(Enum):
     BLACK = 2
 
 class RedBlackTreeNode:
-    def __init__(self, value: int, color: Color, size: int):
+    def __init__(self, value: int, color: Color, size: int) -> None:
         self.value = value
         self.color = color
         self.size = size
-        self.left = None
-        self.right = None
+        self.left: Optional[RedBlackTreeNode] = None
+        self.right: Optional[RedBlackTreeNode] = None
 
 class RedBlackTree:
-    def __init__(self):
-        self.root = None
+    def __init__(self) -> None:
+        self.root: Optional[RedBlackTreeNode] = None
 
-    def insert(self, value: int):
+    def insert(self, value: int) -> None:
         self.root = self._insert_recursive(self.root, value)
 
-    def _insert_recursive(self, root: RedBlackTreeNode | None, value: int):
+    def _insert_recursive(self, root: Optional[RedBlackTreeNode], value: int) -> Optional[RedBlackTreeNode]:
         if root is None:
             return RedBlackTreeNode(value, Color.RED, 1)
 
@@ -36,18 +37,18 @@ class RedBlackTree:
         # Bilancia l'albero
         if self.is_red(root.right) and not self.is_red(root.left):
             root = self.rotate_left(root)
-        if self.is_red(root.left) and self.is_red(root.left.left):
+        if root and root.left and self.is_red(root.left) and self.is_red(root.left.left):
             root = self.rotate_right(root)
-        if self.is_red(root.left) and self.is_red(root.right):
+        if root and self.is_red(root.left) and self.is_red(root.right):
             self.flip_colors(root)
 
-        root.size = 1 + self.size(root.left) + self.size(root.right)
+        if root: root.size = 1 + self.size(root.left) + self.size(root.right)
         return root
 
-    def os_select(self, k: int):
+    def os_select(self, k: int) -> Optional[int]:
         return self._os_select_recursive(self.root, k)
 
-    def _os_select_recursive(self, root: RedBlackTreeNode | None, k: int):
+    def _os_select_recursive(self, root: Optional[RedBlackTreeNode], k: int) -> Optional[int]:
         if root is None:
             return None
 
@@ -59,10 +60,10 @@ class RedBlackTree:
         else:
             return self._os_select_recursive(root.right, k - left_size - 1)
 
-    def os_rank(self, value: int):
+    def os_rank(self, value: int) -> Optional[int]:
         return self._os_rank_recursive(self.root, value)
 
-    def _os_rank_recursive(self, root: RedBlackTreeNode | None, value: int):
+    def _os_rank_recursive(self, root: Optional[RedBlackTreeNode], value: int) -> Optional[int]:
         if root is None:
             return None
 
@@ -78,18 +79,19 @@ class RedBlackTree:
             else:
                 return None
 
-    def size(self, root: RedBlackTreeNode | None):
+    def size(self, root: Optional[RedBlackTreeNode]) -> int:
         if root is None:
             return 0
         return root.size
 
-    def is_red(self, node: RedBlackTreeNode | None):
+    def is_red(self, node: Optional[RedBlackTreeNode]) -> bool:
         if node is None:
             return False
         return node.color == Color.RED
 
-    def rotate_left(self, h: RedBlackTreeNode):
-        x = h.right
+    def rotate_left(self, h: RedBlackTreeNode) -> Optional[RedBlackTreeNode]:
+        if not h.right: return None
+        x: RedBlackTreeNode = h.right
         h.right = x.left
         x.left = h
         x.color = h.color
@@ -98,8 +100,9 @@ class RedBlackTree:
         h.size = 1 + self.size(h.left) + self.size(h.right)
         return x
 
-    def rotate_right(self, h: RedBlackTreeNode):
-        x = h.left
+    def rotate_right(self, h: RedBlackTreeNode) -> Optional[RedBlackTreeNode]:
+        if not h.left: return None
+        x: RedBlackTreeNode = h.left
         h.left = x.right
         x.right = h
         x.color = h.color
@@ -110,21 +113,21 @@ class RedBlackTree:
 
     def flip_colors(self, h: RedBlackTreeNode):
         h.color = Color.RED
-        h.left.color = Color.BLACK
-        h.right.color = Color.BLACK
+        if h.left: h.left.color = Color.BLACK
+        if h.right: h.right.color = Color.BLACK
 
 # Funzione per eseguire l'inserimento dei dati
-def test_rn_insertion(red_black_tree: RedBlackTree, size: int):
+def test_rn_insertion(red_black_tree: RedBlackTree, size: int) -> tuple[float, list[int]]:
     data = [random.randint(1, 1000) for _ in range(size)]
     start_time = timer()
     for item in data:
         red_black_tree.insert(item)
     end_time = timer()
 
-    return [end_time - start_time, data]
+    return (end_time - start_time, data)
 
 # Funzione di test per OS-select
-def test_rn_os_select(red_black_tree: RedBlackTree, size: int):
+def test_rn_os_select(red_black_tree: RedBlackTree, size: int) -> float:
     start_time = timer()
     for k in [random.randint(1, size) for _ in range(size)]:
         red_black_tree.os_select(k)
@@ -133,7 +136,7 @@ def test_rn_os_select(red_black_tree: RedBlackTree, size: int):
     return end_time - start_time
 
 # Funzione di test per OS-rank
-def test_rn_os_rank(red_black_tree: RedBlackTree, data: list[int]):
+def test_rn_os_rank(red_black_tree: RedBlackTree, data: list[int]) -> float:
     start_time = timer()
     for k in data:
         red_black_tree.os_rank(k)
@@ -142,7 +145,7 @@ def test_rn_os_rank(red_black_tree: RedBlackTree, data: list[int]):
     return end_time - start_time
 
 # Esegue i test per ogni dimensione con un certo numero di iterazioni
-def test_augmented_rbt(sizes: list[int], iterations: int):
+def test_augmented_rbt(sizes: list[int], iterations: int) -> None:
     os_select_times = []
     os_rank_times = []
 
@@ -155,7 +158,7 @@ def test_augmented_rbt(sizes: list[int], iterations: int):
 
             red_black_tree = RedBlackTree()
 
-            [elapsed_time, data] = test_rn_insertion(red_black_tree, size)
+            elapsed_time, data = test_rn_insertion(red_black_tree, size)
 
             elapsed_time = test_rn_os_select(red_black_tree, size)
             _os_select_times.append(elapsed_time)

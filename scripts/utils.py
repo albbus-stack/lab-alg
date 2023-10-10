@@ -1,8 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+from typing import Optional, Any
+import numpy as np
 
-def plot_and_table(sizes, times, caption: str, std=None, plot_filename=None):
+def plot_and_table(sizes: list[int], times: list[tuple[float, np.floating[Any]]], caption: str, std: bool = False, plot_filename: Optional[str] = None):
     time_caption = "Tempo (s)"
     size_caption = "Dimensione (n)"
     std_caption = "Deviazione standard"

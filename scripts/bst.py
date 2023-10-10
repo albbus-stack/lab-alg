@@ -3,21 +3,22 @@ from timeit import default_timer as timer
 import numpy as np
 import utils
 import statistics
+from typing import Optional
 
 class TreeNode:
-    def __init__(self, value):
+    def __init__(self, value: int) -> None:
         self.value = value
-        self.left = None
-        self.right = None
+        self.left: Optional[TreeNode] = None
+        self.right: Optional[TreeNode] = None
 
 class BinarySearchTree:
-    def __init__(self):
-        self.root = None
+    def __init__(self) -> None:
+        self.root: Optional[TreeNode] = None
 
-    def insert(self, value):
+    def insert(self, value: int) -> None:
         self.root = self._insert_recursive(self.root, value)
 
-    def _insert_recursive(self, root, value):
+    def _insert_recursive(self, root: Optional[TreeNode], value: int) -> TreeNode:
         if root is None:
             return TreeNode(value)
         if value < root.value:
@@ -26,10 +27,10 @@ class BinarySearchTree:
             root.right = self._insert_recursive(root.right, value)
         return root
 
-    def os_select(self, k):
+    def os_select(self, k: int) -> Optional[int]:
         return self._os_select_recursive(self.root, k)
 
-    def _os_select_recursive(self, root, k):
+    def _os_select_recursive(self, root: Optional[TreeNode], k: int) -> Optional[int]:
         if root is None:
             return None
 
@@ -41,15 +42,15 @@ class BinarySearchTree:
         else:
             return self._os_select_recursive(root.right, k - left_size - 1)
 
-    def _tree_size(self, root):
+    def _tree_size(self, root: Optional[TreeNode]) -> int:
         if root is None:
             return 0
         return 1 + self._tree_size(root.left) + self._tree_size(root.right)
 
-    def os_rank(self, value):
+    def os_rank(self, value: int) -> Optional[int]:
         return self._os_rank_recursive(self.root, value)
 
-    def _os_rank_recursive(self, root, value):
+    def _os_rank_recursive(self, root: Optional[TreeNode], value: int) -> Optional[int]:
         if root is None:
             return None
 
@@ -66,17 +67,17 @@ class BinarySearchTree:
                 return None
 
 # Funzione per eseguire il test di inserimento
-def test_abr_insertion(binary_search_tree, size):
+def test_abr_insertion(binary_search_tree: BinarySearchTree, size: int) -> tuple[float, list[int]]:
     data = [random.randint(1, 1000) for _ in range(size)]
     start_time = timer()
     for item in data:
         binary_search_tree.insert(item)
     end_time = timer()
 
-    return [end_time - start_time, data]
+    return (end_time - start_time, data)
 
 # Funzione per eseguire il test di os-select
-def test_abr_os_select(binary_search_tree, size):
+def test_abr_os_select(binary_search_tree: BinarySearchTree, size: int) -> float:
     start_time = timer()
     for k in [random.randint(1, size) for _ in range(size)]:
         binary_search_tree.os_select(k)
@@ -85,7 +86,7 @@ def test_abr_os_select(binary_search_tree, size):
     return end_time - start_time
 
 # Funzione per eseguire il test di os-rank
-def test_abr_os_rank(binary_search_tree, data):
+def test_abr_os_rank(binary_search_tree: BinarySearchTree, data: list[int]) -> float:
     start_time = timer()
     for value in data:
         binary_search_tree.os_rank(value)
@@ -93,7 +94,7 @@ def test_abr_os_rank(binary_search_tree, data):
 
     return end_time - start_time
 
-def test_bst(sizes, iterations):
+def test_bst(sizes: list[int], iterations: int) -> None:
     os_select_times = []
     os_rank_times = []
 
@@ -106,7 +107,7 @@ def test_bst(sizes, iterations):
 
             binary_search_tree = BinarySearchTree()
 
-            [elapsed_time, data] = test_abr_insertion(binary_search_tree, size)
+            elapsed_time, data = test_abr_insertion(binary_search_tree, size)
 
             elapsed_time = test_abr_os_select(binary_search_tree, size)
             _os_select_times.append(elapsed_time)

@@ -3,17 +3,18 @@ from timeit import default_timer as timer
 import numpy as np
 import utils
 import statistics
+from typing import Optional
 
 class Node:
-    def __init__(self, value):
+    def __init__(self, value: int) -> None:
         self.value = value
-        self.next: Node | None = None
+        self.next: Optional[Node] = None
 
 class OrderedLinkedList:
-    def __init__(self):
-        self.head = None
+    def __init__(self) -> None:
+        self.head: Optional[Node] = None
 
-    def insert(self, value):
+    def insert(self, value: int) -> None:
         new_node = Node(value)
         if self.head is None or value < self.head.value:
             new_node.next = self.head
@@ -25,11 +26,11 @@ class OrderedLinkedList:
             new_node.next = current.next
             current.next = new_node
 
-    def os_select(self, k):
+    def os_select(self, k: int) -> Optional[int]:
         if not self.head or k < 1:
             return None
 
-        current = self.head
+        current: Optional[Node] = self.head
         count = 1
 
         while current:
@@ -39,11 +40,11 @@ class OrderedLinkedList:
             count += 1
         return None
 
-    def os_rank(self, value):
+    def os_rank(self, value: int) -> Optional[int]:
         if not self.head:
             return None
 
-        current = self.head
+        current: Optional[Node] = self.head
         rank = 1
 
         while current:
@@ -54,17 +55,17 @@ class OrderedLinkedList:
         return None
 
 # Funzione per eseguire il test di inserimento
-def test_insertion(ordered_list, size):
+def test_insertion(ordered_list: OrderedLinkedList, size: int) -> tuple[float, list[int]]:
     data = [random.randint(1, 1000) for _ in range(size)]
     start_time = timer()
     for item in data:
         ordered_list.insert(item)
     end_time = timer()
 
-    return [end_time - start_time, data]
+    return (end_time - start_time, data)
 
 # Funzione per eseguire il test di os-select
-def test_os_select(ordered_list, size):
+def test_os_select(ordered_list: OrderedLinkedList, size: int) -> float:
     start_time = timer()
     for k in [random.randint(1, size) for _ in range(size)]:
         ordered_list.os_select(k)
@@ -73,7 +74,7 @@ def test_os_select(ordered_list, size):
     return end_time - start_time
 
 # Funzione per eseguire il test di os-rank
-def test_os_rank(ordered_list, data):
+def test_os_rank(ordered_list: OrderedLinkedList, data: list[int]) -> float:
     start_time = timer()
     for k in data:
         ordered_list.os_rank(k)
@@ -81,7 +82,7 @@ def test_os_rank(ordered_list, data):
 
     return end_time - start_time
 
-def test_ordered_list(sizes, iterations):
+def test_ordered_list(sizes: list[int], iterations: int) -> None:
     os_select_times = []
     os_rank_times = []
 
@@ -94,7 +95,7 @@ def test_ordered_list(sizes, iterations):
 
             ordered_list = OrderedLinkedList()
 
-            [elapsed_time, data] = test_insertion(ordered_list, size)
+            elapsed_time, data = test_insertion(ordered_list, size)
 
             elapsed_time = test_os_select(ordered_list, size)
             _os_select_times.append(elapsed_time)
