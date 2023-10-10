@@ -5,15 +5,16 @@ import os
 def plot_and_table(sizes, times, caption: str, std=None, plot_filename=None):
     time_caption = "Tempo (s)"
     size_caption = "Dimensione (n)"
+    std_caption = "Deviazione standard"
 
     if std:
         means = [mean for mean, _ in times]
         devs_std = [dev_std for _, dev_std in times]
-        data = {size_caption: sizes, time_caption: means, 'Deviazione standard': devs_std}
+        data = {size_caption: sizes, time_caption: means, std_caption: devs_std}
 
         df = pd.DataFrame(data)
         df[time_caption] = df[time_caption].apply(lambda x: '{:.3f}'.format(round(x, 3)))
-        df['Deviazione standard'] = df['Deviazione standard'].apply(lambda x: '{:.3f}'.format(round(x, 3)))
+        df[std_caption] = df[std_caption].apply(lambda x: '{:.3f}'.format(round(x, 3)))
 
         plt.errorbar(sizes, means, yerr=devs_std, fmt='o-')
         plt.xlabel(size_caption)

@@ -26,47 +26,6 @@ class BinarySearchTree:
             root.right = self._insert_recursive(root.right, key)
         return root
 
-    def remove(self, key):
-        self.root = self._remove_recursive(self.root, key)
-
-    def _remove_recursive(self, root, key):
-        if root is None:
-            return root
-
-        if key < root.key:
-            root.left = self._remove_recursive(root.left, key)
-        elif key > root.key:
-            root.right = self._remove_recursive(root.right, key)
-        else:
-            # Nodo con il valore da rimuovere
-            if root.left is None:
-                return root.right
-            elif root.right is None:
-                return root.left
-
-            # Nodo con due figli, trovare il successore in ordine
-            root.key = self._find_min_key(root.right)
-            root.right = self._remove_recursive(root.right, root.key)
-
-        return root
-
-    def _find_min_key(self, root):
-        while root.left is not None:
-            root = root.left
-        return root.key
-
-    def search(self, key):
-        return self._search_recursive(self.root, key)
-
-    def _search_recursive(self, root, key):
-        if root is None:
-            return False
-        if root.key == key:
-            return True
-        if key < root.key:
-            return self._search_recursive(root.left, key)
-        return self._search_recursive(root.right, key)
-
     def os_select(self, k):
         return self._os_select_recursive(self.root, k)
 
@@ -107,7 +66,7 @@ class BinarySearchTree:
                 return None
 
 # Funzione per eseguire il test di inserimento
-def test_abr_insertion(size, binary_search_tree):
+def test_abr_insertion(binary_search_tree, size):
     data = [random.randint(1, 1000) for _ in range(size)]
     start_time = timer()
     for item in data:
@@ -116,27 +75,8 @@ def test_abr_insertion(size, binary_search_tree):
 
     return [end_time - start_time, data]
 
-# Funzione per eseguire il test di inserimento
-def test_abr_search(binary_search_tree, data):
-    start_time = timer()
-    for item in data:
-        binary_search_tree.search(item)
-    end_time = timer()
-
-    return end_time - start_time
-
-# Funzione per eseguire il test di rimozione
-def test_abr_removal(binary_search_tree, data):
-    # Rimozione degli elementi
-    start_time = timer()
-    for item in data:
-        binary_search_tree.remove(item)
-    end_time = timer()
-
-    return end_time - start_time
-
 # Funzione per eseguire il test di os-select
-def test_abr_os_select(size, binary_search_tree):
+def test_abr_os_select(binary_search_tree, size):
     start_time = timer()
     for k in [random.randint(1, size) for _ in range(size)]:
         binary_search_tree.os_select(k)
@@ -161,9 +101,6 @@ def test_bst(sizes, iterations):
     os_rank_times = []
 
     for size in sizes:
-        _insertion_times = []
-        _removal_times = []
-        _search_times = []
         _os_select_times = []
         _os_rank_times = []
 
@@ -172,38 +109,22 @@ def test_bst(sizes, iterations):
 
             binary_search_tree = BinarySearchTree()
 
-            [elapsed_time, data] = test_abr_insertion(size, binary_search_tree)
-            # _insertion_times.append(elapsed_time)
+            [elapsed_time, data] = test_abr_insertion(binary_search_tree, size)
 
-            # elapsed_time = test_abr_search(binary_search_tree, data)
-            # _search_times.append(elapsed_time)
-
-            elapsed_time = test_abr_os_select(size, binary_search_tree)
+            elapsed_time = test_abr_os_select(binary_search_tree, size)
             _os_select_times.append(elapsed_time)
 
             elapsed_time = test_abr_os_rank(binary_search_tree, data)
             _os_rank_times.append(elapsed_time)
 
-            # elapsed_time = test_abr_removal(binary_search_tree, data)
-            # _removal_times.append(elapsed_time)
-
-        # insertion_times.append((np.mean(_insertion_times), np.std(_insertion_times)))
-        # search_times.append((np.mean(_search_times), np.std(_search_times)))
         os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times)))
         os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
-        # removal_times.append((np.mean(_removal_times), np.std(_removal_times)))
 
-    # it = plot_and_table(sizes, insertion_times, std=True, caption="Inserimento in un ABR", time_caption="Tempo di inserimento (s)")
-    it = ""
-    # rt = plot_and_table(sizes, removal_times, std=True, caption="Rimozione in un ABR", time_caption="Tempo di rimozione (s)")
-    rt = ""
-    # ht = plot_and_table(sizes, search_times, std=True, caption="Ricerca in un ABR", time_caption="Tempo di ricerca (s)")
-    ht = ""
     st = utils.plot_and_table(sizes, os_select_times, std=True, caption="OS-Select in un ABR", plot_filename="os-select-abr")
     kt = utils.plot_and_table(sizes, os_rank_times, std=True, caption="OS-Rank in un ABR", plot_filename="os-rank-abr")
 
     # Scrivi il codice LaTeX in un file .tex
-    utils.write_to_latex_file('tabelle-abr.tex', [it, rt, ht, st, kt])
+    utils.write_to_latex_file('tabelle-abr.tex', [st, kt])
 
 if __name__ == "__main__":
     # sizes = [100, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000]
