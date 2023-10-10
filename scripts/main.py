@@ -1,4 +1,4 @@
-from linked_list import test_linked_list
+from ordered_list import test_ordered_list
 from bst import test_bst
 from augmented_rbt import test_augmented_rbt
 
@@ -7,6 +7,6 @@ if __name__ == "__main__":
     sizes = [50, 100, 500, 1000, 1500]
     iterations = 250
 
-    test_linked_list(sizes, iterations)
+    test_ordered_list(sizes, iterations)
     test_bst(sizes, iterations)
     test_augmented_rbt(sizes, iterations)

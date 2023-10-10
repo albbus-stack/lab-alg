@@ -137,9 +137,6 @@ def test_rn_os_rank(red_black_tree, data):
     return end_time - start_time
 
 def test_augmented_rbt(sizes, iterations):
-    insertion_times = []
-    search_times = []
-    removal_times = []
     os_select_times = []
     os_rank_times = []
 

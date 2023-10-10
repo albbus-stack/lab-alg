@@ -94,9 +94,6 @@ def test_abr_os_rank(binary_search_tree, data):
     return end_time - start_time
 
 def test_bst(sizes, iterations):
-    insertion_times = []
-    removal_times = []
-    search_times = []
     os_select_times = []
     os_rank_times = []
 
