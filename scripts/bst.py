@@ -5,8 +5,8 @@ import utils
 import statistics
 
 class TreeNode:
-    def __init__(self, key):
-        self.key = key
+    def __init__(self, value):
+        self.value = value
         self.left = None
         self.right = None
 
@@ -14,16 +14,16 @@ class BinarySearchTree:
     def __init__(self):
         self.root = None
 
-    def insert(self, key):
-        self.root = self._insert_recursive(self.root, key)
+    def insert(self, value):
+        self.root = self._insert_recursive(self.root, value)
 
-    def _insert_recursive(self, root, key):
+    def _insert_recursive(self, root, value):
         if root is None:
-            return TreeNode(key)
-        if key < root.key:
-            root.left = self._insert_recursive(root.left, key)
-        elif key > root.key:
-            root.right = self._insert_recursive(root.right, key)
+            return TreeNode(value)
+        if value < root.value:
+            root.left = self._insert_recursive(root.left, value)
+        elif value > root.value:
+            root.right = self._insert_recursive(root.right, value)
         return root
 
     def os_select(self, k):
@@ -35,7 +35,7 @@ class BinarySearchTree:
 
         left_size = self._tree_size(root.left)
         if left_size == k - 1:
-            return root.key
+            return root.value
         elif left_size > k - 1:
             return self._os_select_recursive(root.left, k)
         else:
@@ -53,10 +53,10 @@ class BinarySearchTree:
         if root is None:
             return None
 
-        if value == root.key:
+        if value == root.value:
             return self._tree_size(root.left) + 1
 
-        if value < root.key:
+        if value < root.value:
             return self._os_rank_recursive(root.left, value)
         else:
             right_rank = self._os_rank_recursive(root.right, value)

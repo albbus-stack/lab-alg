@@ -5,8 +5,8 @@ import utils
 import statistics
 
 class RedBlackTreeNode:
-    def __init__(self, key, color, size):
-        self.key = key
+    def __init__(self, value, color, size):
+        self.value = value
         self.color = color  # "R" per rosso, "B" per nero
         self.size = size
         self.left = None
@@ -16,17 +16,17 @@ class RedBlackTree:
     def __init__(self):
         self.root = None
 
-    def insert(self, key):
-        self.root = self._insert_recursive(self.root, key)
+    def insert(self, value):
+        self.root = self._insert_recursive(self.root, value)
 
-    def _insert_recursive(self, root, key):
+    def _insert_recursive(self, root, value):
         if root is None:
-            return RedBlackTreeNode(key, "R", 1)
+            return RedBlackTreeNode(value, "R", 1)
 
-        if key < root.key:
-            root.left = self._insert_recursive(root.left, key)
-        elif key > root.key:
-            root.right = self._insert_recursive(root.right, key)
+        if value < root.value:
+            root.left = self._insert_recursive(root.left, value)
+        elif value > root.value:
+            root.right = self._insert_recursive(root.right, value)
 
         # Bilancia l'albero
         if self.is_red(root.right) and not self.is_red(root.left):
@@ -48,7 +48,7 @@ class RedBlackTree:
 
         left_size = self.size(root.left)
         if left_size == k - 1:
-            return root.key
+            return root.value
         elif left_size > k - 1:
             return self._os_select_recursive(root.left, k)
         else:
@@ -61,10 +61,10 @@ class RedBlackTree:
         if root is None:
             return None
 
-        if value == root.key:
+        if value == root.value:
             return self.size(root.left) + 1
 
-        if value < root.key:
+        if value < root.value:
             return self._os_rank_recursive(root.left, value)
         else:
             right_rank = self._os_rank_recursive(root.right, value)

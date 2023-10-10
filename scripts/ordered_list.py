@@ -5,8 +5,8 @@ import utils
 import statistics
 
 class Node:
-    def __init__(self, data):
-        self.data = data
+    def __init__(self, value):
+        self.value = value
         self.next: Node | None = None
 
 class OrderedLinkedList:
@@ -15,12 +15,12 @@ class OrderedLinkedList:
 
     def insert(self, value):
         new_node = Node(value)
-        if self.head is None or value < self.head.data:
+        if self.head is None or value < self.head.value:
             new_node.next = self.head
             self.head = new_node
         else:
             current = self.head
-            while current.next is not None and current.next.data < value:
+            while current.next is not None and current.next.value < value:
                 current = current.next
             new_node.next = current.next
             current.next = new_node
@@ -34,7 +34,7 @@ class OrderedLinkedList:
 
         while current:
             if count == k:
-                return current.data
+                return current.value
             current = current.next
             count += 1
         return None
@@ -47,7 +47,7 @@ class OrderedLinkedList:
         rank = 1
 
         while current:
-            if current.data == value:
+            if current.value == value:
                 return rank
             current = current.next
             rank += 1
