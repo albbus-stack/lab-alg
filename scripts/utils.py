@@ -55,7 +55,7 @@ def plot_and_table(sizes, times, caption: str, std=None, plot_filename=None):
     return latex_table
 
 def write_to_latex_file(filename, lines):
-    latex_dir = "latex"
+    latex_dir = "../latex"
     full_path = os.path.join(latex_dir, filename)
 
     try:
