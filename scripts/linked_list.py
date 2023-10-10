@@ -1,6 +1,8 @@
 import random
 from timeit import default_timer as timer
-import matplotlib.pyplot as plt
+import numpy as np
+import utils
+import statistics
 
 class Node:
     def __init__(self, data):
@@ -87,6 +89,15 @@ def test_insertion(size, ordered_list):
 
     return [end_time - start_time, data]
 
+# Funzione per eseguire il test di ricerca
+def test_search(ordered_list, data):
+    start_time = timer()
+    for item in data:
+        ordered_list.search(item)
+    end_time = timer()
+
+    return end_time - start_time
+
 # Funzione per eseguire il test di rimozione
 def test_removal(ordered_list, data):
     # Rimozione degli elementi
@@ -115,24 +126,30 @@ def test_os_rank(ordered_list, data):
 
     return end_time - start_time
 
-if __name__ == "__main__":
-    sizes = [1000, 5000, 10000, 15000]
+def test_linked_list(sizes, iterations):
     insertion_times = []
     removal_times = []
+    search_times = []
     os_select_times = []
     os_rank_times = []
 
     for size in sizes:
         _insertion_times = []
         _removal_times = []
+        _search_times = []
         _os_select_times = []
         _os_rank_times = []
 
-        for _ in range(20):
+        for i in range(iterations):
+            print('LL - Dimensione:', size, 'Iterazione:', i+1)
+
             ordered_list = OrderedLinkedList()
 
             [elapsed_time, data] = test_insertion(size, ordered_list)
-            _insertion_times.append(elapsed_time)
+            # _insertion_times.append(elapsed_time)
+
+            # elapsed_time = test_search(ordered_list, data)
+            # _search_times.append(elapsed_time)
 
             elapsed_time = test_os_select(size, ordered_list)
             _os_select_times.append(elapsed_time)
@@ -140,26 +157,30 @@ if __name__ == "__main__":
             elapsed_time = test_os_rank(ordered_list, data)
             _os_rank_times.append(elapsed_time)
 
-            elapsed_time = test_removal(ordered_list, data)
-            _removal_times.append(elapsed_time)
+            # elapsed_time = test_removal(ordered_list, data)
+            # _removal_times.append(elapsed_time)
 
-        mean = sum(_insertion_times) / len(_insertion_times)
-        insertion_times.append(mean)
-
-        mean = sum(_os_select_times) / len(_os_select_times)
-        os_select_times.append(mean)
-
-        mean = sum(_os_rank_times) / len(_os_rank_times)
-        os_rank_times.append(mean)
-
-        mean = sum(_removal_times) / len(_removal_times)
-        removal_times.append(mean)
-
-    it = plot_and_table(sizes, insertion_times, caption="Inserimento in una lista ordinata", time_caption="Tempo di inserimento (s)")
-    rt = plot_and_table(sizes, removal_times, caption="Rimozione in una lista ordinata", time_caption="Tempo di rimozione (s)")
-    st = plot_and_table(sizes, os_select_times, caption="OS-Select in una lista ordinata", time_caption="Tempo di OS-Select (s)")
-    kt = plot_and_table(sizes, os_rank_times, caption="OS-Rank in una lista ordinata", time_caption="Tempo di OS-Rank (s)")
+        # insertion_times.append((np.mean(_insertion_times), np.std(_insertion_times)))
+        # search_times.append((np.mean(_search_times), np.std(_search_times)))
+        os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times)))
+        os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
+        # removal_times.append((np.mean(_removal_times), np.std(_removal_times)))
+    
+    # it = plot_and_table(sizes, insertion_times, std=True, caption="Inserimento in una lista ordinata", time_caption="Tempo di inserimento (s)")
+    it = ""
+    # rt = plot_and_table(sizes, removal_times, std=True, caption="Rimozione in una lista ordinata", time_caption="Tempo di rimozione (s)")
+    rt = ""
+    # ht = plot_and_table(sizes, search_times, std=True, caption="Ricerca in una lista ordinata", time_caption="Tempo di ricerca (s)")
+    ht = ""
+    st = utils.plot_and_table(sizes, os_select_times, std=True, caption="OS-Select in una lista ordinata", plot_filename="os-select-lista")
+    kt = utils.plot_and_table(sizes, os_rank_times, std=True, caption="OS-Rank in una lista ordinata",  plot_filename="os-rank-lista")
 
     # Scrivi il codice LaTeX in un file .tex
-    with open('tabelle-lista-ordinata.tex', 'w') as file:
-      file.write('\n'.join([it, rt, st, kt]))
+    utils.write_to_latex_file('tabelle-lista-ordinata.tex', [it, rt, ht, st, kt])
+
+if __name__ == "__main__":
+    # sizes = [100, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000]
+    sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100]
+    iterations = 50
+
+    test_linked_list(sizes, iterations)

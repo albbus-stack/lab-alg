@@ -1,6 +1,8 @@
 import random
 from timeit import default_timer as timer
-from utils import plot_and_table
+import numpy as np
+import utils
+import statistics
 
 class TreeNode:
     def __init__(self, key):
@@ -114,6 +116,15 @@ def test_abr_insertion(size, binary_search_tree):
 
     return [end_time - start_time, data]
 
+# Funzione per eseguire il test di inserimento
+def test_abr_search(binary_search_tree, data):
+    start_time = timer()
+    for item in data:
+        binary_search_tree.search(item)
+    end_time = timer()
+
+    return end_time - start_time
+
 # Funzione per eseguire il test di rimozione
 def test_abr_removal(binary_search_tree, data):
     # Rimozione degli elementi
@@ -142,24 +153,30 @@ def test_abr_os_rank(binary_search_tree, data):
 
     return end_time - start_time
 
-if __name__ == "__main__":
-    sizes = [1000, 5000, 10000, 25000, 50000]
+def test_bst(sizes, iterations):
     insertion_times = []
     removal_times = []
+    search_times = []
     os_select_times = []
     os_rank_times = []
 
     for size in sizes:
         _insertion_times = []
         _removal_times = []
+        _search_times = []
         _os_select_times = []
         _os_rank_times = []
 
-        for _ in range(20):
+        for i in range(iterations):
+            print('ABR - Dimensione:', size, 'Iterazione:', i+1)
+
             binary_search_tree = BinarySearchTree()
-            
+
             [elapsed_time, data] = test_abr_insertion(size, binary_search_tree)
-            _insertion_times.append(elapsed_time)
+            # _insertion_times.append(elapsed_time)
+
+            # elapsed_time = test_abr_search(binary_search_tree, data)
+            # _search_times.append(elapsed_time)
 
             elapsed_time = test_abr_os_select(size, binary_search_tree)
             _os_select_times.append(elapsed_time)
@@ -167,26 +184,30 @@ if __name__ == "__main__":
             elapsed_time = test_abr_os_rank(binary_search_tree, data)
             _os_rank_times.append(elapsed_time)
 
-            elapsed_time = test_abr_removal(binary_search_tree, data)
-            _removal_times.append(elapsed_time)
+            # elapsed_time = test_abr_removal(binary_search_tree, data)
+            # _removal_times.append(elapsed_time)
 
-        mean = sum(_insertion_times) / len(_insertion_times)
-        insertion_times.append(mean)
+        # insertion_times.append((np.mean(_insertion_times), np.std(_insertion_times)))
+        # search_times.append((np.mean(_search_times), np.std(_search_times)))
+        os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times)))
+        os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
+        # removal_times.append((np.mean(_removal_times), np.std(_removal_times)))
 
-        mean = sum(_os_select_times) / len(_os_select_times)
-        os_select_times.append(mean)
-
-        mean = sum(_os_rank_times) / len(_os_rank_times)
-        os_rank_times.append(mean)
-
-        mean = sum(_removal_times) / len(_removal_times)
-        removal_times.append(mean)
-
-    it = plot_and_table(sizes, insertion_times, caption="Inserimento in un ABR", time_caption="Tempo di inserimento (s)")
-    rt = plot_and_table(sizes, removal_times, caption="Rimozione in un ABR", time_caption="Tempo di rimozione (s)")
-    st = plot_and_table(sizes, os_select_times, caption="OS-Select in un ABR", time_caption="Tempo di OS-Select (s)")
-    kt = plot_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR", time_caption="Tempo di OS-Rank (s)")
+    # it = plot_and_table(sizes, insertion_times, std=True, caption="Inserimento in un ABR", time_caption="Tempo di inserimento (s)")
+    it = ""
+    # rt = plot_and_table(sizes, removal_times, std=True, caption="Rimozione in un ABR", time_caption="Tempo di rimozione (s)")
+    rt = ""
+    # ht = plot_and_table(sizes, search_times, std=True, caption="Ricerca in un ABR", time_caption="Tempo di ricerca (s)")
+    ht = ""
+    st = utils.plot_and_table(sizes, os_select_times, std=True, caption="OS-Select in un ABR", plot_filename="os-select-abr")
+    kt = utils.plot_and_table(sizes, os_rank_times, std=True, caption="OS-Rank in un ABR", plot_filename="os-rank-abr")
 
     # Scrivi il codice LaTeX in un file .tex
-    with open('tabelle-abr.tex', 'w') as file:
-      file.write('\n'.join([it, rt, st, kt]))
+    utils.write_to_latex_file('tabelle-abr.tex', [it, rt, ht, st, kt])
+
+if __name__ == "__main__":
+    # sizes = [100, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000]
+    sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100]
+    iterations = 50
+
+    test_bst(sizes, iterations)
