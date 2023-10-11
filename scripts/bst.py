@@ -66,67 +66,54 @@ class BinarySearchTree:
             else:
                 return None
 
-# Funzione per eseguire il test di inserimento
-def test_abr_insertion(binary_search_tree: BinarySearchTree, size: int) -> tuple[float, list[int]]:
-    data = [random.randint(1, 1000) for _ in range(size)]
-    start_time = timer()
-    for item in data:
-        binary_search_tree.insert(item)
-    end_time = timer()
-
-    return (end_time - start_time, data)
-
-# Funzione per eseguire il test di os-select
-def test_abr_os_select(binary_search_tree: BinarySearchTree, size: int) -> float:
-    start_time = timer()
-    for k in [random.randint(1, size) for _ in range(size)]:
-        binary_search_tree.os_select(k)
-    end_time = timer()
-
-    return end_time - start_time
-
-# Funzione per eseguire il test di os-rank
-def test_abr_os_rank(binary_search_tree: BinarySearchTree, data: list[int]) -> float:
-    start_time = timer()
-    for value in data:
-        binary_search_tree.os_rank(value)
-    end_time = timer()
-
-    return end_time - start_time
-
-def test_bst(sizes: list[int], iterations: int) -> None:
-    os_select_times = []
+def test_bst(sizes: list[int], iterations: int):
     os_rank_times = []
+    os_select_times = []
 
     for size in sizes:
-        _os_select_times = []
         _os_rank_times = []
+        _os_select_times = []
 
         for i in range(iterations):
             print('ABR - Dimensione:', size, 'Iterazione:', i+1)
 
             binary_search_tree = BinarySearchTree()
 
-            elapsed_time, data = test_abr_insertion(binary_search_tree, size)
+            data = [random.randint(1, 1000) for _ in range(size)]
+            for item in data:
+                binary_search_tree.insert(item)
 
-            elapsed_time = test_abr_os_select(binary_search_tree, size)
-            _os_select_times.append(elapsed_time)
+            start_time = timer()
+            for k in range(size):
+                binary_search_tree.os_select(k+1)
+            end_time = timer()
 
-            elapsed_time = test_abr_os_rank(binary_search_tree, data)
-            _os_rank_times.append(elapsed_time)
+            _os_select_times.append(end_time - start_time)
+
+            start_time = timer()
+            for value in data:
+                binary_search_tree.os_rank(value)
+            end_time = timer()
+
+            _os_rank_times.append(end_time - start_time)
 
         os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times)))
         os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
 
-    st = utils.plot_and_table(sizes, os_select_times, std=True, caption="OS-Select in un ABR", plot_filename="os-select-abr")
-    kt = utils.plot_and_table(sizes, os_rank_times, std=True, caption="OS-Rank in un ABR", plot_filename="os-rank-abr")
-
-    # Scrivi il codice LaTeX in un file .tex
-    utils.write_to_latex_file('tabelle-abr.tex', [st, kt])
+    return (utils.data_and_table(sizes, os_select_times, caption="OS-Select in un ABR"), 
+            utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR"))
 
 if __name__ == "__main__":
     # sizes = [100, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000]
-    sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100]
+    sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100, 200, 300, 400, 500]
     iterations = 50
 
-    test_bst(sizes, iterations)
+    ((st, mst, dst), (kt, mkt, dkt))  = test_bst(sizes, iterations)
+    utils.plot(sizes, mst, dst)
+    utils.save_plot("abr-os-select", title="OS-Select in un ABR")
+    utils.clear_plot()
+
+    utils.plot(sizes, mkt, dkt)
+    utils.save_plot("abr-os-rank", title="OS-Rank in un ABR")
+    
+    utils.write_to_latex_file('tabelle-abr.tex', [st, kt])
