@@ -1,7 +1,7 @@
 import random
 from timeit import default_timer as timer
 import numpy as np
-import utils
+from utils import Utils
 import statistics
 from typing import Optional
 from enum import Enum
@@ -155,8 +155,8 @@ def test_augmented_rbt(sizes: list[int], iterations: int):
         os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
 
     # Generazione dei grafici e delle tabelle in latex
-    return (utils.data_and_table(sizes, os_select_times, caption="OS-Select in un albero RN aumentato"),
-            utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato"))
+    return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un albero RN aumentato"),
+            Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato"))
 
 if __name__ == "__main__":
     #sizes = [100, 1000, 2500, 5000, 7500]
@@ -164,12 +164,12 @@ if __name__ == "__main__":
     iterations = 50
 
     ((st, mst, dst), (kt, mkt, dkt)) = test_augmented_rbt(sizes, iterations)
-    utils.plot(sizes, mst, dst)
-    utils.save_plot("rn-os-select", title="OS-Select in un albero RN aumentato")
-    utils.clear_plot()
+    Utils.plot(sizes, mst, dst)
+    Utils.save_plot("rn-os-select", title="OS-Select in un albero RN aumentato")
+    Utils.clear_plot()
 
-    utils.plot(sizes, mkt, dkt)
-    utils.save_plot("rn-os-rank", title="OS-Rank in un albero RN aumentato")
+    Utils.plot(sizes, mkt, dkt)
+    Utils.save_plot("rn-os-rank", title="OS-Rank in un albero RN aumentato")
 
-    utils.write_to_latex_file('tabelle-rn-aumentato.tex', [st, kt])
+    Utils.write_to_latex_file('tabelle-rn-aumentato.tex', [st, kt])
     

@@ -1,7 +1,7 @@
 import random
 from timeit import default_timer as timer
 import numpy as np
-import utils
+from utils import Utils
 import statistics
 from typing import Optional
 
@@ -100,8 +100,8 @@ def test_bst(sizes: list[int], iterations: int):
         os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times)))
         os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
 
-    return (utils.data_and_table(sizes, os_select_times, caption="OS-Select in un ABR"), 
-            utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR"))
+    return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un ABR"), 
+            Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR"))
 
 if __name__ == "__main__":
     # sizes = [100, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000]
@@ -109,11 +109,11 @@ if __name__ == "__main__":
     iterations = 50
 
     ((st, mst, dst), (kt, mkt, dkt))  = test_bst(sizes, iterations)
-    utils.plot(sizes, mst, dst)
-    utils.save_plot("abr-os-select", title="OS-Select in un ABR")
-    utils.clear_plot()
+    Utils.plot(sizes, mst, dst)
+    Utils.save_plot("abr-os-select", title="OS-Select in un ABR")
+    Utils.clear_plot()
 
-    utils.plot(sizes, mkt, dkt)
-    utils.save_plot("abr-os-rank", title="OS-Rank in un ABR")
+    Utils.plot(sizes, mkt, dkt)
+    Utils.save_plot("abr-os-rank", title="OS-Rank in un ABR")
     
-    utils.write_to_latex_file('tabelle-abr.tex', [st, kt])
+    Utils.write_to_latex_file('tabelle-abr.tex', [st, kt])
