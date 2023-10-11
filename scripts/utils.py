@@ -29,7 +29,7 @@ class Utils:
         return (latex_table, means, devs_std)
 
     @staticmethod
-    def plot(sizes: list[int], means: list[float], dev_std: list[np.floating[Any]], label: Optional[str] = None):
+    def plot(sizes: list[int], means: list[float], dev_std: list[np.floating[Any]], label: Optional[str] = None) -> None:
         time_caption = "Tempo (s)"
         size_caption = "Dimensione (n)"
         
@@ -40,11 +40,11 @@ class Utils:
         plt.grid(True)
 
     @staticmethod
-    def clear_plot():
+    def clear_plot() -> None:
         plt.clf()
 
     @staticmethod
-    def save_plot(plot_filename: str, title: Optional[str] = None):
+    def save_plot(plot_filename: str, title: Optional[str] = None) -> None:
         if title: plt.title(title)
 
         images_dir = "../latex/images"
@@ -53,7 +53,7 @@ class Utils:
         plt.savefig(os.path.join(images_dir, plot_filename), bbox_inches='tight')
 
     @staticmethod
-    def write_to_latex_file(filename, lines):
+    def write_to_latex_file(filename, lines) -> None:
         latex_dir = "../latex"
         full_path = os.path.join(latex_dir, filename)
 
