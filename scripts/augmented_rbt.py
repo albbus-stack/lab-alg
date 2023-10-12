@@ -1,11 +1,9 @@
-import random
-from timeit import default_timer as timer
-import numpy as np
+from tester import Tester
 from utils import Utils
-import statistics
 from typing import Optional
 from enum import Enum
 from bst import TreeNode 
+
 
 class Color(Enum):
     RED = 1
@@ -117,53 +115,12 @@ class RedBlackTree:
         if h.left: h.left.color = Color.BLACK
         if h.right: h.right.color = Color.BLACK
 
-# Esegue i test per ogni dimensione con un certo numero di iterazioni
-def test_augmented_rbt(sizes: list[int], iterations: int):
-    os_rank_times = []
-    os_select_times = []
-
-    for size in sizes:
-        _os_rank_times = []
-        _os_select_times = []
-
-        for i in range(iterations):
-            print('ARN - Dimensione:', size, 'Iterazione:', i+1)
-
-            red_black_tree = RedBlackTree()
-
-            data = [random.randint(1, 1000) for _ in range(size)]
-            # Inserimento dati di test
-            for item in data:
-                red_black_tree.insert(item)
-
-            # Esecuzione dei test sulle statistiche d'ordine
-            start_time = timer()
-            for k in range(size):
-                red_black_tree.os_select(k+1)
-            end_time = timer()
-
-            _os_select_times.append(end_time - start_time)
-
-            start_time = timer()
-            for k in data:
-                red_black_tree.os_rank(k)
-            end_time = timer()
-
-            _os_rank_times.append(end_time - start_time)
-        
-        os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times)))
-        os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
-
-    # Generazione dei grafici e delle tabelle in latex
-    return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un albero RN aumentato"),
-            Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato"))
-
 if __name__ == "__main__":
     #sizes = [100, 1000, 2500, 5000, 7500]
     sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100, 500, 1000, 2000, 3000, 4000, 5000]
     iterations = 50
 
-    ((st, mst, dst), (kt, mkt, dkt)) = test_augmented_rbt(sizes, iterations)
+    ((st, mst, dst), (kt, mkt, dkt)) = Tester.test_augmented_rbt(sizes, iterations)
     Utils.plot(sizes, mst, dst)
     Utils.save_plot("rn-os-select", title="OS-Select in un albero RN aumentato")
     Utils.clear_plot()
