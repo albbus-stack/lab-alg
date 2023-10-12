@@ -1,17 +1,46 @@
-% DOCUMENT SETUP %
-
-\documentclass[twocolumn]{article}
+% SETUP DOCUMENTO %
+\documentclass[onecolumn]{article}
 \usepackage[italian]{babel}
 
 \usepackage{tgschola}
 \linespread{1.25}
 \usepackage[fontsize=12pt]{scrextend}
-\usepackage[a4paper,top=2.5cm,bottom=3cm,left=3cm,right=3cm,marginparwidth=1.75cm,footskip=1.75cm,heightrounded]{geometry}
+\usepackage[a4paper,top=2.5cm,bottom=2.5cm,left=3cm,right=3cm,marginparwidth=1.75cm,footskip=1.5cm,heightrounded]{geometry}
 
+\usepackage{subfig}
 \usepackage{xcolor}
 \definecolor{linkColor}{RGB}{2,11,120}
-\usepackage[colorlinks=true, allcolors=linkColor]{hyperref}
+\definecolor{bgTitleRed}{RGB}{85,45,50}
 
+% STILE BLOCCHI DI CODICE %
+\usepackage[T1]{fontenc}
+\usepackage[ttdefault=true]{AnonymousPro}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings, breakable, minted, skins}
+\tcbset{listing engine=minted}
+
+\newtcblisting{bashCode}[2][]{
+    breakable,
+    listing only, #1 ,title=#2,
+    minted language=bash,
+    minted style=vs,
+    coltitle=white,
+    colbacktitle=bgTitleRed,
+    toptitle=3mm, bottomtitle=2.5mm,
+    top=2mm, bottom=3mm,
+    fonttitle=\ttfamily,
+    enhanced, frame hidden, 
+    minted options={fontfamily=AnonymousPro, 
+    tabsize=4, breaklines, autogobble, linenos=false}}
+
+\setminted[python]{fontfamily=AnonymousPro, fontsize=\footnotesize, breaksymbol=.}
+
+\usepackage[colorlinks=true, allcolors=linkColor]{hyperref}
+\newcommand\anchor[2]{%
+  \href{#2}{#1}\footnote{\url{#2}}%
+}
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{float}
@@ -19,64 +48,117 @@
 \usepackage{subfig}
 \graphicspath{ {./images/} }
 
-% HEADERS %
-
-\title{Relazione Laboratorio Algoritmi}
+% INTESTAZIONE %
+\title{Relazione Laboratorio Algoritmi\\\textit{Esercizio B}}
 \author{Alberto Del Buono Paolini}
 \date{Ottobre 2023}
 
 \begin{document}
-
 \begin{onecolumn}
-\maketitle
+\vspace*{-4em}
+{\let\newpage\relax\maketitle}
 \tableofcontents
-\vspace{3cm}
 \end{onecolumn}
+\vspace{1cm}
 \pagebreak
 
-% CONTENT %
+% CONTENUTO %
+\section{Descrizione del problema}
 
-\section{Introduzione}
+\subsection{Introduzione}
+Questa relazione mira ad analizzare e commentare il calcolo delle statistiche d'ordine dinamiche \textit{os-select} e \textit{os-rank}, mettendo a confronto le seguenti strutture dati: 
+\begin{enumerate}
+\setlength\itemsep{-0.25em}
+    \item Lista ordinata
+    \item Albero binario di ricerca senza attributo \textit{size}
+    \item Albero rosso-nero con attributo \textit{size}
+\end{enumerate}
 
-Questo studio mira a confrontare diverse implementazioni di statistiche d'ordine dinamiche, mettendo a confronto tre approcci principali: utilizzo di una lista ordinata, di un Albero Binario di Ricerca (ABR) senza attributo \textit{size}, e di un ABR come discusso nelle lezioni. L'obiettivo è valutare le prestazioni e le caratteristiche di ciascuna implementazione attraverso test ed esperimenti pratici.
+L'obiettivo è valutare le prestazioni e le caratteristiche di ciascuna implementazione attraverso test ed esperimenti pratici, confrontandole con le evidenze teoriche descritte in questo capitolo.
 
-\section{Caratteristiche teoriche}
+\subsection{Caratteristiche teoriche}
 
-La soluzione più performante tra le tre opzioni dipenderà da vari fattori, tra cui il tipo di operazioni che intendi eseguire con maggiore frequenza, la dimensione dei dati con cui stai lavorando e le specifiche esigenze del tuo problema. Di seguito fornisco alcune considerazioni generali:
+Per prima cosa dobbiamo descrivere la natura di queste tre strutture dati e delle statistiche d'ordine dinamiche che andremo ad analizzare. Esamineremo quindi nei vari casi le complessità computazionali di:
 
-\subsection{Lista Ordinata}
+\begin{enumerate}
+\setlength\itemsep{-0.25em}
+    \item \textit{os-select(k)}: è un'operazione che trova l'elemento con un rango specifico $k$ in un insieme di dati, cioè restituisce il $k$-esimo elemento più piccolo dell'insieme di dati.
+    \item \textit{os-rank(x)}: è un'operazione che calcola il rango di un elemento specifico $x$ all'interno di un insieme di dati, dove il rango di un elemento è il numero di elementi nell'insieme che sono inferiori o uguali a $x$.
+\end{enumerate}
 
-L'implementazione con lista ordinata utilizza una struttura dati basata su una lista concatenata con puntatori. In questa struttura, gli elementi vengono inseriti in modo che siano mantenuti in ordine crescente o decrescente, a seconda della specifica implementazione. Questo comporta che l'inserimento di un nuovo elemento richieda l'individuazione della posizione corretta in cui inserirlo in modo che l'ordine sia conservato. Le operazioni di ricerca in una lista ordinata sono relativamente efficienti poiché è possibile sfruttare l'ordine degli elementi per effettuare ricerche binarie, riducendo il tempo di ricerca rispetto a una lista non ordinata.
+\subsubsection{Lista collegata ordinata}
 
-Tuttavia, l'inserimento e la rimozione possono essere più costosi in termini di tempo rispetto a una struttura dati come un ABR, in quanto richiedono spostamenti e aggiornamenti dei puntatori per mantenere l'ordine. La complessità di queste operazioni può dipendere dalla dimensione della lista e dalla posizione dell'elemento da inserire o rimuovere.
+Questa è una struttura composta da nodi che hanno attributi \textit{value} (il valore del dato contenuto nel nodo) e \textit{next} (un puntatore al nodo successivo della lista oppure vuoto). Per attraversare completamente una lista collegata con puntatori bisogna quindi partire dal primo nodo (chiamato solitamente \textit{head}) e spostarsi sui nodi successivi tramite il puntatore \textit{next}, fino a che non è vuoto, a significare la fine della lista. Inoltre è una struttura ordinata: ogni nodo viene inserito nella lista in base al valore del suo dato (con ordine ascendente o discendente). Supponiamo di essere nel caso di ordine ascendente, come mostrato in \hyperref[fig:lista]{figura 1}.
 
-\subsection{Albero Binario di Ricerca senza attributo \textit{size}}
+\begin{figure}
+  \includegraphics[width=\linewidth]{lista.png}
+  \caption{Lista collegata con puntatori}
+  \label{fig:lista}
+\end{figure}
 
-L'Albero Binario di Ricerca (ABR) è una struttura dati in cui ogni nodo ha al massimo due figli: uno a sinistra contenente valori inferiori e uno a destra contenente valori superiori rispetto al nodo padre. L'ABR senza l'attributo \textit{size} utilizza questa struttura per organizzare gli elementi in modo che gli elementi più piccoli siano situati nei sottoalberi sinistri e quelli più grandi nei sottoalberi destri.
+\textbf{os-select}: questa operazione richiede di scorrere la lista dall'inizio, contando gli elementi fino a raggiungere il $k$-esimo. Questo significa che il tempo necessario per trovare questo elemento cresce linearmente con $k$ e, nel caso peggiore, bisognerà scorrere tutta la lista lunga $n$. La complessità di os-select è quindi $O(k)$ e $\Theta(n)$ nel caso peggiore. \vspace{0.5em}
 
-Le operazioni di inserimento, ricerca e rimozione in un ABR senza attributo \textit{size} dipendono dalla struttura dell'albero. In particolare, la loro complessità può variare in base all'equilibrio dell'albero. Se l'albero è bilanciato, le operazioni possono essere efficienti, ma se l'albero è sbilanciato, la complessità può aumentare.
+\textbf{os-rank}: Per determinare il rango di un elemento x bisogna scorrere la lista contando quante chiavi sono inferiori a $x$, perciò le complessità sono uguali a os-select. La lista collegata ordinata non è molto efficiente per il calcolo delle due statistiche d'ordine, specialmente quando si cerca un $k$ o un $x$ grande. 
 
-\subsection{Albero Rosso-Nero con attributo \textit{size}}
+\subsubsection{Albero binario di ricerca}
 
-Un Albero Rosso-Nero con attributo \textit{size} introduce un miglioramento significativo nelle operazioni di ricerca basate su statistiche d'ordine. L'inserimento in un Albero Rosso-Nero con attributo \textit{size} è simile a quello di un ABR senza attributo \textit{size}, ma con un piccolo overhead aggiuntivo per l'aggiornamento dell'attributo \textit{size} dei nodi durante l'inserimento. La complessità rimane $O(\log n)$ nel caso migliore (con albero bilanciato).
+Un albero binario di ricerca è una struttura dati gerarchica composta da nodi collegati tra loro. Ogni nodo ha attributi per al massimo due figli, uno a sinistra (\textit{left}) e uno a destra (\textit{right}), e un valore (\textit{value}) che soddisfi le seguenti proprietà:
 
-La ricerca di statistiche d'ordine come il k-esimo elemento più piccolo o il rango di un elemento diventa molto efficiente in un Albero Rosso-Nero con attributo \textit{size}. Queste operazioni possono essere eseguite in $O(\log n)$, il che è notevolmente più veloce rispetto a una lista ordinata o a un ABR senza attributo \textit{size}.
+\begin{enumerate}
+\setlength\itemsep{-0.25em}
+    \item I valori nei nodi del sottoalbero sinistro sono inferiori o uguali al valore nel nodo padre.
+    \item I valori nei nodi del sottoalbero destro sono superiori al valore nel nodo padre.
+\end{enumerate}
 
-In generale, ci si aspetta che un Albero Rosso-Nero con attributo \textit{size} eccella nelle operazioni di ricerca basate su statistiche d'ordine, mentre potrebbe essere leggermente meno efficiente nelle operazioni di inserimento e rimozione rispetto a un ABR senza attributo \textit{size}. Tuttavia, l'efficienza dipende anche dalla struttura dell'albero e dalla sua capacità di mantenere un buon bilanciamento. Gli esperimenti permetteranno di confermare queste previsioni e fornire dati empirici sulle prestazioni.
+Quindi per qualsiasi nodo nell'ABR (illustrato in \hyperref[fig:alberi]{figura 2a}), tutti i nodi nei sottoalberi a sinistra contengono valori inferiori o uguali, e tutti i nodi nei sottoalberi a destra contengono valori superiori; questo aiuta la complessità del calcolo delle statistiche d'ordine. \vspace{1em}
+
+\textbf{os-select}: Questo metodo attraversa un singolo percorso nell'albero per trovare il $k$-esimo elemento e la complessità è $O(h)$, dove $h$ è l'altezza dell'albero. Il tempo di esecuzione dipende dall'altezza dell'albero e dalla struttura specifica dell'albero. Se l'albero è bilanciato, l'altezza è $\Theta(\log n)$, garantendo una complessità di $O(\log n)$ nel caso peggiore. \vspace{0.5em}
+
+\textbf{os-rank}: anche os-rank richiede un percorso nell'albero fino a un elemento specifico $x$ e ha una complessità temporale di $O(h)$. Sarebbe necessaria la costante riequilibratura dell'albero per mantenere la complessità $O(\log n)$. Tuttavia, se l'albero è sbilanciato con un unico ramo, la complessità può arrivare fino a $\Theta(n)$, ugualmente ad os-select.
+
+\begin{figure}
+  \centering
+    \subfloat[Albero binario di ricerca]{{\includegraphics[width=\linewidth/2-1.5em]{abr} }}
+    \qquad
+    \subfloat[Albero rosso-nero aumentato]{{\includegraphics[width=\linewidth/2-1.5em]{arn} }}
+    \caption{Illustrazioni alberi}
+    \label{fig:alberi}
+\end{figure}
+
+\subsubsection{Albero rosso-nero aumentato con attributo \textit{size}}
+
+Gli alberi rosso-neri aumentati sono una variante dei tradizionali alberi rosso-neri. Le proprietà di un albero rosso-nero sono estese da quelle di un albero binario di ricerca con la seguente: ogni nodo in un ARN è etichettato come \textit{rosso} o \textit{nero} nell'attributo \textit{color}, seguendo le seguenti regole per garantire che l'albero sia bilanciato:
+
+\begin{enumerate}
+\setlength\itemsep{-0.25em}
+    \item Un nodo è o rosso o nero.
+    \item La radice dell'albero è nera.
+    \item Non possono esistere due nodi rossi consecutivi lungo qualsiasi cammino dall'alto verso il basso.
+\end{enumerate}
+
+Gli ARN aumentati (in \hyperref[fig:alberi]{figura 2b}) includono una modifica aggiuntiva: l'attributo \textit{size} in ciascun nodo dell'albero. Questo attributo tiene traccia del numero di nodi nel sottoalbero con radice in quel nodo (include anche il nodo stesso) e velocizza in media il calcolo del rango di un elemento all'interno dell'albero. \vspace{1em}
+
+\textbf{os-select}: l'operazione di os-select è molto efficiente grazie all'attributo \textit{size}, possiamo trovare il $k$-esimo elemento sempre in $O(h)$ e $\Theta(\log n)$ nel caso peggiore. \vspace{0.5em}
+
+\textbf{os-rank}: Anche l'operazione di os-rank ha una complessità di $O(h)$ e di $\Theta(\log n)$ nel caso peggiore. \vspace{1em}
+
+In generale, l'implementazione con l'albero rosso-nero aumentato con l'attributo \textit{size} eccelle in entrambe le statistiche, offrendo prestazioni notevolmente migliori rispetto alla lista collegata ordinata e agli ABR non bilanciati, essendo gli ARN bilanciati ad ogni inserimento.
 
 \section{Descrizione degli esperimenti}
+\subsection{Piattaforma di esecuzione}
 
-In questa sezione, delineeremo in dettaglio gli esperimenti che verranno condotti. Non ci limiteremo a un semplice elenco, ma spiegheremo il motivo dietro ciascun esperimento e come verrà misurato il suo successo.
+Per sviluppare il codice ed eseguire tutti i test, ottenendo le tabelle e i grafici riportati in questo documento, è stata utilizzata un'istanza di \anchor{Gitpod}{https://www.gitpod.io/} con le seguenti specifiche:
+\begin{bashCode}{Output neofetch}
+OS: Ubuntu 22.04.3 LTS x86_64 
+Host: Google Compute Engine 
+Kernel: 6.1.54-060154-generic 
+CPU: AMD EPYC 7B13 (16 cores) @ 2.449GHz 
+Memory: 30099MiB / 64297MiB
+\end{bashCode}
 
 \subsection{Strategia di iterazione}
 
-Puoi eseguire iterazioni su un insieme di dati in diversi modi, ad esempio:
-
-\begin{itemize}
-  \item \textbf{Iterazione casuale}: Esegui le operazioni in modo casuale sugli elementi dell'insieme di dati. Questo è utile per valutare le prestazioni in scenari realistici in cui le operazioni potrebbero essere distribuite in modo casuale nel tempo.
-  \item \textbf{Iterazione crescente o decrescente}: Esegui le operazioni in ordine crescente o decrescente rispetto ai valori degli elementi. Questo può aiutarti a valutare le prestazioni quando le operazioni seguono un ordine specifico.
-  \item \textbf{Iterazione mista}: Combina l'iterazione casuale con l'iterazione crescente o decrescente per coprire una varietà di scenari.
-\end{itemize}
+\textbf{Iterazione casuale}: Esegui le operazioni in modo casuale sugli elementi dell'insieme di dati. Questo è utile per valutare le prestazioni in scenari realistici in cui le operazioni potrebbero essere distribuite in modo casuale nel tempo.
 
 \subsection{Dimensioni delle strutture dati}
 
@@ -92,23 +174,116 @@ Puoi anche calcolare la deviazione standard o l'intervallo di confidenza per mis
 
 \subsection{Randomizzazione}
 
-L'uso di dati casuali durante i test può essere utile per valutare le prestazioni in scenari realistici, ma assicurati di registrare i semi (seed) dei generatori casuali utilizzati nei test in modo da poter riprodurre i risultati in futuro, se necessario.
+L'uso di dati casuali durante i test può essere utile per valutare le prestazioni in scenari realistici.
 
+\newpage
 \section{Documentazione del codice}
 
-Forniremo documentazione soprattutto delle implementazioni delle statistiche d'ordine dinamiche per tutte e tre le strutture dati.
+La struttura delle classi è osservabile nel diagramma UML in \hyperref[fig:classi]{figura 3}; segue una breve descrizione di ogni attributo e metodo implementato per eseguire i test sulle statistiche d'ordine dinamiche. 
 
+\begin{figure}[h!]
+  \includegraphics[width=\linewidth]{classi.png}
+  \caption{Diagramma UML delle classi}
+  \label{fig:classi}
+\end{figure}
+
+\subsection{Lista collegata ordinata}
+\texttt{\textbf{LinkedListNode}}
+\begin{itemize}
+\setlength\itemsep{0em}
+    \item \verb|value|: il valore memorizzato nel nodo
+    \item \verb|next|: il riferimento al nodo successivo
+\end{itemize}
+
+{\setlength{\parindent}{0em} \texttt{\textbf{OrderedLinkedList}}}
+\begin{itemize}
+\setlength\itemsep{0em}
+    \item \verb|head|: il riferimento al primo nodo nella lista (di tipo \texttt{LinkedListNode})
+    \item \verb|insert(value)|: inserisce un nuovo nodo con il valore specificato nella lista in modo ordinato
+    \item \verb|os_select(k)|: restituisce il valore dell'elemento con rango $k$ nella lista
+    \item \verb|os_rank(value)|: restituisce il rango dell'elemento con valore specificato nella lista
+\end{itemize}
+
+\subsection{Albero binario di ricerca}
+\texttt{\textbf{TreeNode}}
+\begin{itemize}
+\setlength\itemsep{0em}
+    \item \verb|value|: il valore memorizzato nel nodo
+    \item \verb|left|: il riferimento al figlio sinistro
+    \item \verb|right|: il riferimento al figlio destro
+\end{itemize}
+
+{\setlength{\parindent}{0em} \texttt{\textbf{BinarySearchTree}}}
+\begin{itemize}
+\setlength\itemsep{0em}
+    \item \verb|root|: il riferimento alla radice dell'albero (di tipo \texttt{TreeNode})
+    \item \verb|insert(value)|: inserisce un nuovo nodo con il valore specificato nell'albero binario di ricerca
+    \item \verb|os_select(k)|: restituisce il valore dell'elemento con rango $k$ nell'albero binario di ricerca
+    \item \verb|_tree_size(root)|: calcola la dimensione (numero di nodi) del sottoalbero radicato in un nodo specifico
+    \item \verb|os_rank(value)|: restituisce il rango dell'elemento con valore specificato nell'albero binario di ricerca
+\end{itemize}
+
+\subsection{Albero rosso-nero aumentato con attributo \textit{size}}
+\texttt{\textbf{RedBlackTreeNode}}
+\begin{itemize}
+\setlength\itemsep{0em}
+    \item \verb|color|: il colore del nodo (ROSSO o NERO)
+    \item \verb|size|: il numero di nodi nel sottoalbero radicato in questo nodo
+    \item \verb|left|: il riferimento al figlio sinistro
+    \item \verb|right|: il riferimento al figlio destro
+    \item \verb|value|: il valore memorizzato nel nodo (ereditato dalla classe \texttt{TreeNode})
+\end{itemize}
+
+{\setlength{\parindent}{0em} \texttt{\textbf{AugmentedRedBlackTree}}}
+\begin{itemize}
+\setlength\itemsep{0em}
+    \item \verb|root|: il riferimento alla radice dell'albero rosso-nero aumentato (di tipo \texttt{RedBlackTreeNode})
+    \item \verb|insert(value)|: inserisce un nuovo nodo con il valore specificato nell'albero rosso-nero aumentato
+    \item \verb|os_select(k)|: restituisce il valore dell'elemento con rango $k$ nell'albero rosso-nero aumentato
+    \item \verb|os_rank(value)|: restituisce il rango dell'elemento con valore specificato nell'albero rosso-nero aumentato
+    \item \verb|_size(root)|: calcola la dimensione (numero di nodi) del sottoalbero radicato in un nodo specifico
+    \item \verb|_is_red(node)|: verifica se il nodo specificato è di colore ROSSO
+    \item \verb|_rotate_left(g)|: esegue una rotazione sinistra nell'albero rosso-nero
+    \item \verb|_rotate_rigth(g)|: esegue una rotazione destra nell'albero rosso-nero
+    \item \verb|_flip_colors(g)|: inverte i colori dei nodi nell'albero rosso-nero
+\end{itemize}
+
+\subsection{Classi \texttt{Tester} e \texttt{Utils}}
+\texttt{\textbf{Tester}}
+\begin{itemize}
+\setlength\itemsep{0em}
+    \item \verb|test_ordered_list(sizes, iterations)|: esegue test e raccolta dati per una lista collegata ordinata
+    \item \verb|test_bst(sizes, iterations)|: esegue test e raccolta dati per un albero binario di ricerca
+    \item \verb|test_augmented_rbt(sizes, iterations)|: esegue test e raccolta dati per un albero rosso-nero aumentato con attributo "size"
+\end{itemize}
+
+{\setlength{\parindent}{0em} \texttt{\textbf{Utils}}}
+\begin{itemize}
+\setlength\itemsep{0em}
+    \item \verb|data_and_table(sizes, times, caption, plot_filename)|: genera dati e tabelle per le dimensioni specificate e i tempi di esecuzione
+    \item \verb|plot(sizes, means, dev_std, label)|: crea un grafico con medie e deviazioni standard
+    \item \verb|clear_plot()|: cancella il grafico corrente
+    \item \verb|save_plot(plot_filename, title)|: salva il grafico corrente con un titolo specificato
+    \item \verb|write_to_latex_file(filename, lines)|: scrive dati su file LaTeX con il nome specificato
+\end{itemize}
+
+\newpage
 \section{Analisi dei risultati sperimentali}
 
-In questa sezione, condurremo un'analisi completa dei risultati sperimentali. Discuteremo le discrepanze tra le prestazioni attese e quelle effettivamente osservate, se presenti, e offriremo interpretazioni basate sui dati raccolti.
+In questa sezione, condurremo un'analisi completa dei risultati sperimentali. Discuteremo le discrepanze tra le prestazioni attese e quelle effettivamente osservate, se presenti, e offriremo interpretazioni basate sui dati raccolti. 
 
 Riferimenti alle tabelle: \ref{Inserimento in una lista ordinata}, \ref{Rimozione in una lista ordinata}, \ref{Ricerca in una lista ordinata}, \ref{OS-Select in una lista ordinata}, \ref{OS-Rank in una lista ordinata}, \ref{Inserimento in un ABR}, \ref{Rimozione in un ABR}, \ref{Ricerca in un ABR}, \ref{OS-Select in un ABR}, \ref{OS-Rank in un ABR}, \ref{Inserimento in un albero RN aumentato}, \ref{Rimozione in un albero RN aumentato}, \ref{Ricerca in un albero RN aumentato}, \ref{OS-Select in un albero RN aumentato}, \ref{OS-Rank in un albero RN aumentato}.
+
+\subsection{os-select}
+
+\subsection{os-rank}
 
 \section{Conclusioni}
 
 Concluderemo la relazione con un riepilogo delle scoperte chiave e delle implicazioni dei risultati sperimentali. Discuteremo anche eventuali sviluppi futuri e possibili miglioramenti.
 
 \newpage
+\section{Tabelle}
 \input{tabelle-lista-ordinata}
 \input{tabelle-abr}
 \input{tabelle-rn-aumentato}
