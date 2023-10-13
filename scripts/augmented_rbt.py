@@ -4,7 +4,6 @@ from typing import Optional
 from enum import Enum
 from bst import TreeNode 
 
-
 class Color(Enum):
     RED = 1
     BLACK = 2

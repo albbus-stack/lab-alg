@@ -32,7 +32,7 @@ class Utils:
         df[std_caption] = df[std_caption].apply(lambda x: '{:.4f}'.format(x))
 
         # Esportazione della tabella in formato LaTeX
-        latex_table = df.style.to_latex(clines="all;data", label=caption, caption=caption, position_float="centering", column_format="cccc", position="H")
+        latex_table = df.style.to_latex(clines="all;data", label=caption, caption=caption, position_float="centering", column_format="|c|c|c|c|")
         
         return (latex_table, medians, devs_std)
 
@@ -61,13 +61,25 @@ class Utils:
         plt.savefig(os.path.join(images_dir, plot_filename), bbox_inches='tight')
 
     @staticmethod
-    def write_to_latex_file(filename, lines) -> None:
+    def write_to_latex_file(filename: str, lines: list[str]) -> None:
         latex_dir = "../latex"
         full_path = os.path.join(latex_dir, filename)
+
+        _lines = []
+        for line in lines:
+            _lines.append(
+                line.replace(
+                    "\\begin{tabular}{|c|c|c|c|}", 
+                    "\\begin{adjustbox}{width=1\\textwidth/2}\n\\begin{tabular}{|c|c|c|c|}\n\\hline"
+                ).replace(
+                    "\\end{tabular}",
+                    "\\end{tabular}\n\\end{adjustbox}"
+                )
+            )
 
         try:
             os.makedirs(latex_dir, exist_ok=True)
             with open(full_path, 'w') as file:
-                file.write('\n'.join(lines))
+                file.write('\n'.join(_lines))
         except Exception as e:
             print(f"Si è verificato un errore durante la scrittura del file '{full_path}': {str(e)}")
