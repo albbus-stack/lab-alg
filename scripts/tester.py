@@ -21,7 +21,7 @@ class Tester:
 
                 ordered_list = OrderedLinkedList()
 
-                data = [random.randint(1, 1000) for _ in range(size)]
+                data = [random.randint(1, 1000 if size < 1000 else size) for _ in range(size)]
                 for item in data:
                     ordered_list.insert(item)
 
@@ -43,7 +43,9 @@ class Tester:
             os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
 
         return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in una lista ordinata"), 
-                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in una lista ordinata"))
+                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in una lista ordinata"), 
+                Utils.data_and_table(sizes, os_select_times, caption="OS-Select in una lista ordinata", is_relative_time=True), 
+                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in una lista ordinata", is_relative_time=True))
     
     @staticmethod
     def test_bst(sizes: list[int], iterations: int):
@@ -61,7 +63,7 @@ class Tester:
 
                 binary_search_tree = BinarySearchTree()
 
-                data = [random.randint(1, 1000) for _ in range(size)]
+                data = [random.randint(1, 1000 if size < 1000 else size) for _ in range(size)]
                 for item in data:
                     binary_search_tree.insert(item)
 
@@ -83,7 +85,9 @@ class Tester:
             os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
 
         return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un ABR"), 
-                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR"))
+                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR"),
+                Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un ABR", is_relative_time=True), 
+                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR", is_relative_time=True))
     
     @staticmethod
     def test_augmented_rbt(sizes: list[int], iterations: int):
@@ -101,7 +105,7 @@ class Tester:
 
                 red_black_tree = RedBlackTree()
 
-                data = [random.randint(1, 1000) for _ in range(size)]
+                data = [random.randint(1, 1000 if size < 1000 else size) for _ in range(size)]
                 # Inserimento dati di test
                 for item in data:
                     red_black_tree.insert(item)
@@ -125,4 +129,6 @@ class Tester:
             os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
 
         return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un albero RN aumentato"),
-                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato"))
+                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato"),
+                Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un albero RN aumentato", is_relative_time=True),
+                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato", is_relative_time=True))

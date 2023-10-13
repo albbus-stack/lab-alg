@@ -120,13 +120,13 @@ if __name__ == "__main__":
     sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100, 500, 1000, 2000, 3000, 4000, 5000]
     iterations = 50
 
-    ((st, mst, dst), (kt, mkt, dkt)) = Tester.test_augmented_rbt(sizes, iterations)
-    Utils.plot(sizes, mst, dst)
-    Utils.save_plot("rn-os-select", title="OS-Select in un albero RN aumentato")
+    ((st, mst, dst), (kt, mkt, dkt), (st_rel, mst_rel, dst_rel), (kt_rel, mkt_rel, dkt_rel)) = Tester.test_augmented_rbt(sizes, iterations)
+    Utils.plot(sizes, mst, dst, "OS-Select")
+    Utils.plot(sizes, mkt, dkt, "OS-Rank")
+    Utils.save_plot("rn-aumentato", title="OS-Select e OS-Rank in un albero RN aumentato")
     Utils.clear_plot()
 
-    Utils.plot(sizes, mkt, dkt)
-    Utils.save_plot("rn-os-rank", title="OS-Rank in un albero RN aumentato")
-
-    Utils.write_to_latex_file('tabelle-rn-aumentato.tex', [st, kt])
+    Utils.plot(sizes, mst_rel, dst_rel, "OS-Select")
+    Utils.plot(sizes, mkt_rel, dkt_rel, "OS-Rank")
+    Utils.save_plot("rn-aumentato-rel", title="OS-Select e OS-Rank relativi in un albero RN aumentato")
     

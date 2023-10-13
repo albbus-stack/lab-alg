@@ -53,15 +53,15 @@ class OrderedLinkedList:
 
 if __name__ == "__main__":
     # sizes = [100, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000]
-    sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100, 200, 300, 400, 500]
-    iterations = 50
+    sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100, 200, 300, 400, 500, 1000, 1500]
+    iterations = 100
 
-    ((st, mst, dst), (kt, mkt, dkt)) = Tester.test_ordered_list(sizes, iterations)
-    Utils.plot(sizes, mst, dst)
-    Utils.save_plot("lista-os-select", title="OS-Select in una lista ordinata")
+    ((st, mst, dst), (kt, mkt, dkt), (st_rel, mst_rel, dst_rel), (kt_rel, mkt_rel, dkt_rel)) = Tester.test_ordered_list(sizes, iterations)
+    Utils.plot(sizes, mst, dst, "OS-Select")
+    Utils.plot(sizes, mkt, dkt, "OS-Rank")
+    Utils.save_plot("lista-ordinata", title="OS-Select e OS-Rank in una lista ordinata")
     Utils.clear_plot()
 
-    Utils.plot(sizes, mkt, dkt)
-    Utils.save_plot("lista-os-rank", title="OS-Rank in una lista ordinata")
-
-    Utils.write_to_latex_file('tabelle-lista-ordinata.tex', [st, kt])
+    Utils.plot(sizes, mst_rel, dst_rel, "OS-Select")
+    Utils.plot(sizes, mkt_rel, dkt_rel, "OS-Rank")
+    Utils.save_plot("lista-ordinata-rel", title="OS-Select e OS-Rank relativi in una lista ordinata")

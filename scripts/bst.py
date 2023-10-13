@@ -63,19 +63,17 @@ class BinarySearchTree:
             else:
                 return None
 
-
-
 if __name__ == "__main__":
     # sizes = [100, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000]
     sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100, 200, 300, 400, 500]
     iterations = 50
 
-    ((st, mst, dst), (kt, mkt, dkt)) = Tester.test_bst(sizes, iterations)
-    Utils.plot(sizes, mst, dst)
-    Utils.save_plot("abr-os-select", title="OS-Select in un ABR")
+    ((st, mst, dst), (kt, mkt, dkt), (st_rel, mst_rel, dst_rel), (kt_rel, mkt_rel, dkt_rel)) = Tester.test_bst(sizes, iterations)
+    Utils.plot(sizes, mst, dst, "OS-Select")
+    Utils.plot(sizes, mkt, dkt, "OS-Rank")
+    Utils.save_plot("abr", title="OS-Select e OS-Rank in un ABR")
     Utils.clear_plot()
 
-    Utils.plot(sizes, mkt, dkt)
-    Utils.save_plot("abr-os-rank", title="OS-Rank in un ABR")
-    
-    Utils.write_to_latex_file('tabelle-abr.tex', [st, kt])
+    Utils.plot(sizes, mst_rel, dst_rel, "OS-Select")
+    Utils.plot(sizes, mkt_rel, dkt_rel, "OS-Rank")
+    Utils.save_plot("abr-rel", title="OS-Select e OS-Rank relativi in un ABR")

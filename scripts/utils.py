@@ -6,34 +6,42 @@ import numpy as np
 
 class Utils:
     @staticmethod
-    def data_and_table(sizes: list[int], times: list[tuple[float, np.floating[Any]]], caption: str, plot_filename: Optional[str] = None):
+    def data_and_table(sizes: list[int], times: list[tuple[float, np.floating[Any]]], caption: str, is_relative_time: Optional[bool] = False):
         time_caption = "Tempo (s)"
         size_caption = "Dimensione (n)"
         std_caption = "Deviazione standard"
 
-        means = [mean for mean, _ in times]
+        medians = [median for median, _ in times]
         devs_std = [dev_std for _, dev_std in times]
-        data = {size_caption: sizes, time_caption: means, std_caption: devs_std}
+
+        for i, median in enumerate(medians):
+            medians[i] = round(median, 4)
+            if is_relative_time:
+                medians[i] = median / sizes[i]
+        for i, dev in enumerate(devs_std):
+            devs_std[i] = round(dev, 4)
+            if is_relative_time:    
+                devs_std[i] = dev / sizes[i]
+            if medians[i] - devs_std[i] < 0:
+                devs_std[i] = np.float32(medians[i])
+            
+        data = {size_caption: sizes, time_caption: medians, std_caption: devs_std}
 
         df = pd.DataFrame(data)
-        df[time_caption] = df[time_caption].apply(lambda x: '{:.3f}'.format(round(x, 3)))
-        df[std_caption] = df[std_caption].apply(lambda x: '{:.3f}'.format(round(x, 3)))
+        df[time_caption] = df[time_caption].apply(lambda x: '{:.4f}'.format(x))
+        df[std_caption] = df[std_caption].apply(lambda x: '{:.4f}'.format(x))
 
         # Esportazione della tabella in formato LaTeX
         latex_table = df.style.to_latex(clines="all;data", label=caption, caption=caption, position_float="centering", column_format="cccc", position="H")
         
-        # Salva il grafico come immagine nella directory "images"
-        if plot_filename:
-            Utils.save_plot(plot_filename)
-
-        return (latex_table, means, devs_std)
+        return (latex_table, medians, devs_std)
 
     @staticmethod
-    def plot(sizes: list[int], means: list[float], dev_std: list[np.floating[Any]], label: Optional[str] = None) -> None:
+    def plot(sizes: list[int], medians: list[float], dev_std: list[np.floating[Any]], label: Optional[str] = None) -> None:
         time_caption = "Tempo (s)"
         size_caption = "Dimensione (n)"
         
-        plt.errorbar(sizes, means, yerr=dev_std, fmt='o-', label=label)
+        plt.errorbar(sizes, medians, yerr=dev_std, fmt='o-', label=label)
         plt.xlabel(size_caption)
         plt.ylabel(time_caption)
         if label: plt.legend()
@@ -47,7 +55,7 @@ class Utils:
     def save_plot(plot_filename: str, title: Optional[str] = None) -> None:
         if title: plt.title(title)
 
-        images_dir = "../latex/images"
+        images_dir = "../latex/images/plots"
         if not os.path.exists(images_dir):
             os.makedirs(images_dir)
         plt.savefig(os.path.join(images_dir, plot_filename), bbox_inches='tight')
