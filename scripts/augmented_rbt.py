@@ -110,7 +110,7 @@ class RedBlackTree:
         h.size = 1 + self._size(h.left) + self._size(h.right)
         return x
 
-    def _flip_colors(self, h: RedBlackTreeNode):
+    def _flip_colors(self, h: RedBlackTreeNode) -> None:
         h.color = Color.RED
         if h.left: h.left.color = Color.BLACK
         if h.right: h.right.color = Color.BLACK

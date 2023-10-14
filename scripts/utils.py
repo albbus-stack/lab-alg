@@ -6,9 +6,11 @@ import numpy as np
 
 DataPoints = List[Tuple[float, float]]
 
+TableAndData = Tuple[List[str], List[float], List[float]]
+
 class Utils:
     @staticmethod
-    def data_and_table(sizes: list[int], times: DataPoints, caption: str, is_relative_time: Optional[bool] = False):
+    def data_and_table(sizes: list[int], times: DataPoints, caption: str, is_relative_time: Optional[bool] = False) -> TableAndData:
         time_caption = "Tempo (s)"
         size_caption = "Dimensione (n)"
         std_caption = "Deviazione standard"

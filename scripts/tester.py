@@ -1,13 +1,15 @@
-from utils import Utils
+from utils import TableAndData, Utils, DataPoints
+from typing import Tuple
 import random
 from timeit import default_timer as timer
 import numpy as np
 import statistics
-from utils import DataPoints
+
+TableAndDataPoints = Tuple[TableAndData, TableAndData, TableAndData, TableAndData]
 
 class Tester:
     @staticmethod
-    def test_ordered_list(sizes: list[int], iterations: int):
+    def test_ordered_list(sizes: list[int], iterations: int) -> TableAndDataPoints:
         from ordered_list import OrderedLinkedList
 
         os_rank_times: DataPoints = []
@@ -49,7 +51,7 @@ class Tester:
                 Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in una lista ordinata", is_relative_time=True))
     
     @staticmethod
-    def test_bst(sizes: list[int], iterations: int):
+    def test_bst(sizes: list[int], iterations: int) -> TableAndDataPoints:
         from bst import BinarySearchTree
 
         os_rank_times: DataPoints = []
@@ -91,7 +93,7 @@ class Tester:
                 Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR", is_relative_time=True))
     
     @staticmethod
-    def test_augmented_rbt(sizes: list[int], iterations: int):
+    def test_augmented_rbt(sizes: list[int], iterations: int) -> TableAndDataPoints:
         from augmented_rbt import RedBlackTree
 
         os_rank_times: DataPoints = []
