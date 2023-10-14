@@ -32,9 +32,17 @@ class Utils:
         df[std_caption] = df[std_caption].apply(lambda x: '{:.4f}'.format(x))
 
         # Esportazione della tabella in formato LaTeX
-        latex_table = df.style.to_latex(clines="all;data", label=caption, caption=caption, position_float="centering", column_format="|c|c|c|c|")
+        segment_size = 40
+        segments = [df[i:i+segment_size] for i in range(0, len(df), segment_size)]
+        latex_tables: list[str] = []
+
+        for i, segment in enumerate(segments):
+            if i == 0:
+                latex_tables.append(segment.style.to_latex(clines="all;data", label=caption, caption=caption, position_float="centering", column_format="|c|c|c|c|"))
+            else:
+                latex_tables.append(segment.style.to_latex(clines="all;data", position_float="centering", column_format="|c|c|c|c|"))
         
-        return (latex_table, medians, devs_std)
+        return (latex_tables, medians, devs_std)
 
     @staticmethod
     def plot(sizes: list[int], medians: list[float], dev_std: list[np.floating[Any]], label: Optional[str] = None) -> None:
@@ -76,7 +84,7 @@ class Utils:
                     "\\end{tabular}\n\\end{adjustbox}"
                 )
             )
-
+        
         try:
             os.makedirs(latex_dir, exist_ok=True)
             with open(full_path, 'w') as file:

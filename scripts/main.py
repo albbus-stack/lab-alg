@@ -73,10 +73,10 @@ if __name__ == "__main__":
     Utils.save_plot("os-rank-rel", title="OS-Rank relativo")
 
     # Tabelle per le tre strutture dati
-    Utils.write_to_latex_file('tabelle-lista-ordinata.tex', [ll_st, ll_kt])
-    Utils.write_to_latex_file('tabelle-abr.tex', [abr_st, abr_kt])
-    Utils.write_to_latex_file('tabelle-rn-aumentato.tex', [rn_st, rn_kt])
+    Utils.write_to_latex_file('tabelle-lista-ordinata.tex', [*ll_st, *ll_kt])
+    Utils.write_to_latex_file('tabelle-abr.tex', [*abr_st, *abr_kt])
+    Utils.write_to_latex_file('tabelle-rn-aumentato.tex', [*rn_st, *rn_kt])
 
-    Utils.write_to_latex_file('tabelle-lista-ordinata-rel.tex', [ll_st_rel, ll_kt_rel])
-    Utils.write_to_latex_file('tabelle-abr-rel.tex', [abr_st_rel, abr_kt_rel])
-    Utils.write_to_latex_file('tabelle-rn-aumentato-rel.tex', [rn_st_rel, rn_kt_rel])
+    Utils.write_to_latex_file('tabelle-lista-ordinata-rel.tex', [*ll_st_rel, *ll_kt_rel])
+    Utils.write_to_latex_file('tabelle-abr-rel.tex', [*abr_st_rel, *abr_kt_rel])
+    Utils.write_to_latex_file('tabelle-rn-aumentato-rel.tex', [*rn_st_rel, *rn_kt_rel])
