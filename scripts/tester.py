@@ -3,18 +3,19 @@ import random
 from timeit import default_timer as timer
 import numpy as np
 import statistics
+from utils import DataPoints
 
 class Tester:
     @staticmethod
     def test_ordered_list(sizes: list[int], iterations: int):
         from ordered_list import OrderedLinkedList
 
-        os_rank_times = []
-        os_select_times = []
+        os_rank_times: DataPoints = []
+        os_select_times: DataPoints = []
 
         for size in sizes:
-            _os_rank_times = []
-            _os_select_times = []
+            _os_rank_times: list[float] = []
+            _os_select_times: list[float] = []
 
             for i in range(iterations):
                 print('LL - Dimensione:', size, 'Iterazione:', i+1)
@@ -39,8 +40,8 @@ class Tester:
 
                 _os_rank_times.append(end_time - start_time)
 
-            os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times)))
-            os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
+            os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times).astype(float)))
+            os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times).astype(float)))
 
         return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in una lista ordinata"), 
                 Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in una lista ordinata"), 
@@ -51,12 +52,12 @@ class Tester:
     def test_bst(sizes: list[int], iterations: int):
         from bst import BinarySearchTree
 
-        os_rank_times = []
-        os_select_times = []
+        os_rank_times: DataPoints = []
+        os_select_times: DataPoints = []
 
         for size in sizes:
-            _os_rank_times = []
-            _os_select_times = []
+            _os_rank_times: list[float] = []
+            _os_select_times: list[float] = []
 
             for i in range(iterations):
                 print('ABR - Dimensione:', size, 'Iterazione:', i+1)
@@ -81,8 +82,8 @@ class Tester:
 
                 _os_rank_times.append(end_time - start_time)
 
-            os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times)))
-            os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
+            os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times).astype(float)))
+            os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times).astype(float)))
 
         return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un ABR"), 
                 Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR"),
@@ -93,12 +94,12 @@ class Tester:
     def test_augmented_rbt(sizes: list[int], iterations: int):
         from augmented_rbt import RedBlackTree
 
-        os_rank_times = []
-        os_select_times = []
+        os_rank_times: DataPoints = []
+        os_select_times: DataPoints = []
 
         for size in sizes:
-            _os_rank_times = []
-            _os_select_times = []
+            _os_rank_times: list[float] = []
+            _os_select_times: list[float] = []
 
             for i in range(iterations):
                 print('ARN - Dimensione:', size, 'Iterazione:', i+1)
@@ -125,8 +126,8 @@ class Tester:
 
                 _os_rank_times.append(end_time - start_time)
             
-            os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times)))
-            os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times)))
+            os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times).astype(float)))
+            os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times).astype(float)))
 
         return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un albero RN aumentato"),
                 Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato"),

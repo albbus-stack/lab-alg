@@ -1,12 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from typing import Optional, Any
+from typing import Optional, Any, List, Tuple
 import numpy as np
+
+DataPoints = List[Tuple[float, float]]
 
 class Utils:
     @staticmethod
-    def data_and_table(sizes: list[int], times: list[tuple[float, np.floating[Any]]], caption: str, is_relative_time: Optional[bool] = False):
+    def data_and_table(sizes: list[int], times: DataPoints, caption: str, is_relative_time: Optional[bool] = False):
         time_caption = "Tempo (s)"
         size_caption = "Dimensione (n)"
         std_caption = "Deviazione standard"
@@ -23,7 +25,7 @@ class Utils:
             if is_relative_time:    
                 devs_std[i] = dev / sizes[i]
             if medians[i] - devs_std[i] < 0:
-                devs_std[i] = np.float32(medians[i])
+                devs_std[i] = medians[i]
             
         data = {size_caption: sizes, time_caption: medians, std_caption: devs_std}
 
@@ -45,7 +47,7 @@ class Utils:
         return (latex_tables, medians, devs_std)
 
     @staticmethod
-    def plot(sizes: list[int], medians: list[float], dev_std: list[np.floating[Any]], label: Optional[str] = None) -> None:
+    def plot(sizes: list[int], medians: list[float], dev_std: list[float], label: Optional[str] = None) -> None:
         time_caption = "Tempo (s)"
         size_caption = "Dimensione (n)"
         
