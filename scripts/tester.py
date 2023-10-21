@@ -7,6 +7,11 @@ import statistics
 
 TableAndDataPoints = Tuple[TableAndData, TableAndData, TableAndData, TableAndData]
 
+# Ogni metodo contenuto in questa classe ritorna:
+#  1. Test dei os-select con tempi effettivi
+#  2. Test dei os-rank con tempi effettivi
+#  3. Test dei os-select con tempi relativi
+#  4. Test dei os-rank con tempi relativi
 class Tester:
     @staticmethod
     def test_ordered_list(sizes: list[int], iterations: int) -> TableAndDataPoints:
@@ -109,11 +114,9 @@ class Tester:
                 red_black_tree = RedBlackTree()
 
                 data = [random.randint(1, 1000 if size < 1000 else size) for _ in range(size)]
-                # Inserimento dati di test
                 for item in data:
                     red_black_tree.insert(item)
 
-                # Esecuzione dei test sulle statistiche d'ordine
                 start_time = timer()
                 for k in range(size):
                     red_black_tree.os_select(k+1)
