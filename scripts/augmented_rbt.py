@@ -3,7 +3,6 @@ from utils import Utils
 from typing import Optional
 from enum import Enum
 from bst import TreeNode 
-import numpy as np
 
 class Color(Enum):
     RED = 0

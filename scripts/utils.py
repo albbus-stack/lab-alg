@@ -1,8 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-from typing import Optional, Any, List, Tuple
-import numpy as np
+from typing import Optional, List, Tuple
 
 DataPoints = List[Tuple[float, float]]
 
