@@ -6,8 +6,8 @@ from bst import TreeNode
 import numpy as np
 
 class Color(Enum):
-    RED = 1
-    BLACK = 2
+    RED = 0
+    BLACK = 1
 
 class RedBlackTreeNode(TreeNode):
     def __init__(self, value: int, color: Color, size: int) -> None:
