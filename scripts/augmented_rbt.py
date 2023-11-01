@@ -2,7 +2,8 @@ from tester import Tester
 from utils import Utils
 from typing import Optional
 from enum import Enum
-from bst import TreeNode 
+from bst import TreeNode
+import numpy as np
 
 class Color(Enum):
     RED = 0
@@ -116,8 +117,9 @@ class RedBlackTree:
 
 if __name__ == "__main__":
     #sizes = [100, 1000, 2500, 5000, 7500]
-    sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100, 500, 1000, 2000, 3000, 4000, 5000]
-    iterations = 50
+    #sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100, 150, 500, 1000, 2000, 3000, 4000, 5000]
+    sizes = [*np.arange(10, 500, 10)]
+    iterations = 100
 
     ((st, mst, dst), (kt, mkt, dkt), (st_rel, mst_rel, dst_rel), (kt_rel, mkt_rel, dkt_rel)) = Tester.test_augmented_rbt(sizes, iterations)
     Utils.plot(sizes, mst, dst, "OS-Select")
@@ -128,4 +130,15 @@ if __name__ == "__main__":
     Utils.plot(sizes, mst_rel, dst_rel, "OS-Select")
     Utils.plot(sizes, mkt_rel, dkt_rel, "OS-Rank")
     Utils.save_plot("rn-aumentato-rel", title="OS-Select e OS-Rank relativi in un albero RN aumentato")
+    Utils.clear_plot()
+
+    ((st, mst, dst), (kt, mkt, dkt), (st_rel, mst_rel, dst_rel), (kt_rel, mkt_rel, dkt_rel)) = Tester.test_augmented_rbt(sizes, iterations, is_float_test=True)
+    Utils.plot(sizes, mst, dst, "OS-Select")
+    Utils.plot(sizes, mkt, dkt, "OS-Rank")
+    Utils.save_plot("rn-aumentato-float", title="OS-Select e OS-Rank in un albero RN aumentato con float")
+    Utils.clear_plot()
+
+    Utils.plot(sizes, mst_rel, dst_rel, "OS-Select")
+    Utils.plot(sizes, mkt_rel, dkt_rel, "OS-Rank")
+    Utils.save_plot("rn-aumentato-float-rel", title="OS-Select e OS-Rank relativi in un albero RN aumentato con float")
     

@@ -65,3 +65,14 @@ if __name__ == "__main__":
     Utils.plot(sizes, mst_rel, dst_rel, "OS-Select")
     Utils.plot(sizes, mkt_rel, dkt_rel, "OS-Rank")
     Utils.save_plot("lista-ordinata-rel", title="OS-Select e OS-Rank relativi in una lista ordinata")
+    Utils.clear_plot()
+
+    ((st, mst, dst), (kt, mkt, dkt), (st_rel, mst_rel, dst_rel), (kt_rel, mkt_rel, dkt_rel)) = Tester.test_ordered_list(sizes, iterations, is_float_test=True)
+    Utils.plot(sizes, mst, dst, "OS-Select")
+    Utils.plot(sizes, mkt, dkt, "OS-Rank")
+    Utils.save_plot("lista-ordinata-float", title="OS-Select e OS-Rank in una lista ordinata con float")
+    Utils.clear_plot()
+
+    Utils.plot(sizes, mst_rel, dst_rel, "OS-Select")
+    Utils.plot(sizes, mkt_rel, dkt_rel, "OS-Rank")
+    Utils.save_plot("lista-ordinata-float-rel", title="OS-Select e OS-Rank relativi in una lista ordinata con float")

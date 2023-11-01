@@ -18,13 +18,14 @@ class Utils:
         devs_std = [dev_std for _, dev_std in times]
 
         for i, median in enumerate(medians):
-            medians[i] = round(median, 4)
+            medians[i] = round(median, 6)
             if is_relative_time:
                 medians[i] = median / sizes[i]
         for i, dev in enumerate(devs_std):
-            devs_std[i] = round(dev, 4)
+            devs_std[i] = round(dev, 6)
             if is_relative_time:    
                 devs_std[i] = dev / sizes[i]
+            # FIXME: The standrd deviation should not go below zero but right now it does so I clamp it
             if medians[i] - devs_std[i] < 0:
                 devs_std[i] = medians[i]
             

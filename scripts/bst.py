@@ -77,3 +77,14 @@ if __name__ == "__main__":
     Utils.plot(sizes, mst_rel, dst_rel, "OS-Select")
     Utils.plot(sizes, mkt_rel, dkt_rel, "OS-Rank")
     Utils.save_plot("abr-rel", title="OS-Select e OS-Rank relativi in un ABR")
+    Utils.clear_plot()
+
+    ((st, mst, dst), (kt, mkt, dkt), (st_rel, mst_rel, dst_rel), (kt_rel, mkt_rel, dkt_rel)) = Tester.test_bst(sizes, iterations, is_float_test=True)
+    Utils.plot(sizes, mst, dst, "OS-Select")
+    Utils.plot(sizes, mkt, dkt, "OS-Rank")
+    Utils.save_plot("abr-float", title="OS-Select e OS-Rank in un ABR con float")
+    Utils.clear_plot()
+
+    Utils.plot(sizes, mst_rel, dst_rel, "OS-Select")
+    Utils.plot(sizes, mkt_rel, dkt_rel, "OS-Rank")
+    Utils.save_plot("abr-float-rel", title="OS-Select e OS-Rank relativi in un ABR con float")
