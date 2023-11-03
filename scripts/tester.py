@@ -73,7 +73,6 @@ class Tester:
                 if is_float_test:
                     data = [random.uniform(1, 1000) for _ in range(size)]
                 else:
-                    #data = [random.randint(1, 1000 if size < 1000 else size) for _ in range(size)]
                     data = [random.randint(1, 5000) for _ in range(size)]
 
                 for item in data:

@@ -25,7 +25,7 @@ class Utils:
             devs_std[i] = round(dev, 6)
             if is_relative_time:    
                 devs_std[i] = dev / sizes[i]
-            # FIXME: The standrd deviation should not go below zero but right now it does so I clamp it
+            # FIXME: The standard deviation should not go below zero but right now it does so I clamp it
             if medians[i] - devs_std[i] < 0:
                 devs_std[i] = medians[i]
             
