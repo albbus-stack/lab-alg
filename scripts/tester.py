@@ -55,44 +55,53 @@ class Tester:
             _os_rank_times: list[float] = []
             _os_select_times: list[float] = []
 
+            ds: Any = None
+            if data_structure == DataStructures.OL:
+                from ordered_list import OrderedLinkedList
+                ds = OrderedLinkedList()
+            elif data_structure == DataStructures.BST:
+                from bst import BinarySearchTree
+                ds = BinarySearchTree()
+            elif data_structure == DataStructures.RBT:
+                from augmented_rbt import RedBlackTree
+                ds = RedBlackTree()
+
+            data: List[Any] = []
+            if is_float_test:
+                data = [random.uniform(1, 1000) for _ in range(size)]
+            else:
+                data = [random.randint(1, 5000) for _ in range(size)]
+
+            for item in data:
+                ds.insert(item)
+
             for i in range(iterations):
                 print(f'{data_structure.name} -', 'FLOAT' if is_float_test else 'INT',  '- Dimensione:', size, 'Iterazione:', i+1)
-                
-                ds: Any = None
-                if data_structure == DataStructures.OL:
-                    from ordered_list import OrderedLinkedList
-                    ds = OrderedLinkedList()
-                elif data_structure == DataStructures.BST:
-                    from bst import BinarySearchTree
-                    ds = BinarySearchTree()
-                elif data_structure == DataStructures.RBT:
-                    from augmented_rbt import RedBlackTree
-                    ds = RedBlackTree()
 
-                data: List[Any] = []
-                if is_float_test:
-                    data = [random.uniform(1, 1000) for _ in range(size)]
-                else:
-                    data = [random.randint(1, 5000) for _ in range(size)]
-
-                for item in data:
-                    ds.insert(item)
+                k_arr_rank = []
+                k_arr_select = []
+                for _ in range(iterations):
+                    k_arr_select.append(random.randint(1, size))
+                    k_arr_rank.append(data[random.randint(0, size-1)])
 
                 start_time = timer()
-                for k in range(size):
-                    ds.os_select(k+1)
+                for k in k_arr_select:
+                    ds.os_select(k)
                 end_time = timer()
 
                 _os_select_times.append(end_time - start_time)
 
                 start_time = timer()
-                for k in data:
+                for k in k_arr_rank:
                     ds.os_rank(k)
                 end_time = timer()
-
+                
                 _os_rank_times.append(end_time - start_time)
 
-            os_select_times.append((statistics.median(_os_select_times), np.std(_os_select_times, dtype=float)))
-            os_rank_times.append((statistics.median(_os_rank_times), np.std(_os_rank_times, dtype=float)))
+            asymmetric_error_select = [statistics.median(_os_select_times) - min(_os_select_times), max(_os_select_times) - statistics.median(_os_select_times)]
+            asymmetric_error_rank = [statistics.median(_os_rank_times) - min(_os_rank_times), max(_os_rank_times) - statistics.median(_os_rank_times)]
+
+            os_select_times.append((statistics.median(_os_select_times), asymmetric_error_select))
+            os_rank_times.append((statistics.median(_os_rank_times), asymmetric_error_rank))
 
         return (os_select_times, os_rank_times)

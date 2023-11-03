@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import numpy as np
 from typing import Optional, List, Tuple
 
 DataPoints = List[Tuple[float, float]]
@@ -12,28 +13,21 @@ class Utils:
     def data_and_table(sizes: list[int], times: DataPoints, caption: str, is_relative_time: Optional[bool] = False) -> TableAndData:
         time_caption = "Tempo (s)"
         size_caption = "Dimensione (n)"
-        std_caption = "Deviazione standard"
+        yerr_caption = "Errori -/+"
 
         medians = [median for median, _ in times]
-        devs_std = [dev_std for _, dev_std in times]
+        yerrs = [yerr for _, yerr in times]
 
         for i, median in enumerate(medians):
             medians[i] = round(median, 6)
             if is_relative_time:
                 medians[i] = median / sizes[i]
-        for i, dev in enumerate(devs_std):
-            devs_std[i] = round(dev, 6)
-            if is_relative_time:    
-                devs_std[i] = dev / sizes[i]
-            # FIXME: The standard deviation should not go below zero but right now it does so I clamp it
-            if medians[i] - devs_std[i] < 0:
-                devs_std[i] = medians[i]
             
-        data = {size_caption: sizes, time_caption: medians, std_caption: devs_std}
+        data = {size_caption: sizes, time_caption: medians, yerr_caption: yerrs}
 
         df = pd.DataFrame(data)
         df[time_caption] = df[time_caption].apply(lambda x: '{:.4f}'.format(x))
-        df[std_caption] = df[std_caption].apply(lambda x: '{:.4f}'.format(x))
+        df[yerr_caption] = df[yerr_caption].apply(lambda x: '-{:.4f}'.format(x[0]) + ', ' + '{:.4f}'.format(x[1]))
 
         # Esportazione della tabella in formato LaTeX
         segment_size = 40
@@ -46,14 +40,14 @@ class Utils:
             else:
                 latex_tables.append(segment.style.to_latex(clines="all;data", position_float="centering", column_format="|c|c|c|c|"))
         
-        return (latex_tables, medians, devs_std)
+        return (latex_tables, medians, yerrs)
 
     @staticmethod
-    def plot(sizes: list[int], medians: list[float], dev_std: list[float], label: Optional[str] = None) -> None:
+    def plot(sizes: list[int], medians: list[float], yerrs: list[float], label: Optional[str] = None) -> None:
         time_caption = "Tempo (s)"
         size_caption = "Dimensione (n)"
-        
-        plt.errorbar(sizes, medians, yerr=dev_std, fmt='o-', label=label)
+
+        plt.errorbar(sizes, medians, yerr=np.array(yerrs).T, fmt='o-', label=label)
         plt.xlabel(size_caption)
         plt.ylabel(time_caption)
         if label: plt.legend()

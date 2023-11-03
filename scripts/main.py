@@ -4,11 +4,11 @@ import numpy as np
 
 if __name__ == "__main__":
     # Primo test
-    # sizes = [*np.arange(10, 1000, 10)]
+    # sizes = [*np.arange(10, 1010, 10)]
     # Secondo test
-    # sizes = [*np.arange(1000, 10000, 500)]
-    # sizes = [10, 25, 50, 75, 100, 150, 250, 500, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000]
-    sizes = [*np.arange(10, 1000, 10)]
+    # sizes = [*np.arange(1000, 10500, 500)]
+
+    sizes = [*np.arange(1000, 10500, 500)]
     iterations = 250
 
     for is_float_test in [False, True]:
