@@ -3,15 +3,24 @@ from utils import Utils
 import numpy as np
 
 if __name__ == "__main__":
-    # Primo test
-    #sizes = [*np.arange(10, 1010, 10)]
-    # Secondo test
-    sizes = [*np.arange(1000, 10100, 100)]
+    # Primo test (s)
+    # sizes = [*np.arange(10, 1010, 10)]
+    # Secondo test (m)
+    # sizes = [*np.arange(1000, 10100, 100)]
+    # Terzo test (l)
+    sizes = [*np.arange(10000, 20500, 500)]
+
+    # test_ranges = [[*np.arange(10, 1010, 10)], [*np.arange(1000, 10100, 100)], [*np.arange(10000, 20500, 500)]]
 
     iterations = 1000
 
     for is_float_test in [False, True]:
         float_string = "-float" if is_float_test else ""
+
+        #FIXME: Complete the script by combining the three tests togheter, 
+        #       saving the corresponing files in the appropriate folders.
+        # for sizes in test_ranges:
+        # size_string = "s" if sizes == test_ranges[0] else "m" if sizes == test_ranges[1] else "l"
 
         ((ll_st, ll_mst), (ll_kt, ll_mkt),
         (ll_st_rel, ll_mst_rel), (ll_kt_rel, ll_mkt_rel)) = Tester.test_ordered_list(sizes, iterations, is_float_test)
