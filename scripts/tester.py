@@ -78,22 +78,16 @@ class Tester:
             for i in range(iterations):
                 print(f'{data_structure.name} -', 'FLOAT' if is_float_test else 'INT',  '- Dimensione:', size, 'Iterazione:', i+1)
 
-                k_arr_rank = []
-                k_arr_select = []
-                for _ in range(iterations):
-                    k_arr_select.append(random.randint(1, size))
-                    k_arr_rank.append(data[random.randint(0, size-1)])
-
+                k = random.randint(1, size)
                 start_time = timer()
-                for k in k_arr_select:
-                    ds.os_select(k)
+                ds.os_select(k)
                 end_time = timer()
 
                 _os_select_times.append(end_time - start_time)
 
+                k = data[random.randint(0, size-1)]
                 start_time = timer()
-                for k in k_arr_rank:
-                    ds.os_rank(k)
+                ds.os_rank(k)
                 end_time = timer()
                 
                 _os_rank_times.append(end_time - start_time)
