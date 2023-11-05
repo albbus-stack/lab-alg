@@ -50,29 +50,3 @@ class OrderedLinkedList:
             current = current.next
             rank += 1
         return None
-
-if __name__ == "__main__":
-    # sizes = [100, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000]
-    sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100, 200, 300, 400, 500, 1000, 1500]
-    iterations = 100
-
-    ((st, mst), (kt, mkt), (st_rel, mst_rel), (kt_rel, mkt_rel)) = Tester.test_ordered_list(sizes, iterations)
-    Utils.plot(sizes, mst, "OS-Select")
-    Utils.plot(sizes, mkt, "OS-Rank")
-    Utils.save_plot("lista-ordinata", title="OS-Select e OS-Rank in una lista ordinata")
-    Utils.clear_plot()
-
-    Utils.plot(sizes, mst_rel, "OS-Select")
-    Utils.plot(sizes, mkt_rel, "OS-Rank")
-    Utils.save_plot("lista-ordinata-rel", title="OS-Select e OS-Rank relativi in una lista ordinata")
-    Utils.clear_plot()
-
-    ((st, mst), (kt, mkt), (st_rel, mst_rel), (kt_rel, mkt_rel)) = Tester.test_ordered_list(sizes, iterations, is_float_test=True)
-    Utils.plot(sizes, mst, "OS-Select")
-    Utils.plot(sizes, mkt, "OS-Rank")
-    Utils.save_plot("lista-ordinata-float", title="OS-Select e OS-Rank in una lista ordinata con float")
-    Utils.clear_plot()
-
-    Utils.plot(sizes, mst_rel, "OS-Select")
-    Utils.plot(sizes, mkt_rel, "OS-Rank")
-    Utils.save_plot("lista-ordinata-float-rel", title="OS-Select e OS-Rank relativi in una lista ordinata con float")

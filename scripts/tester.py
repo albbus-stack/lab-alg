@@ -3,7 +3,6 @@ from utils import TableAndData, Utils, DataPoints
 from typing import Any, Tuple, List
 import random
 from timeit import default_timer as timer
-import numpy as np
 import statistics
 
 class DataStructures(Enum):
@@ -20,31 +19,31 @@ TableAndDataPoints = Tuple[TableAndData, TableAndData, TableAndData, TableAndDat
 
 class Tester:
     @staticmethod
-    def test_ordered_list(sizes: list[int], iterations: int, is_float_test: bool = False) -> TableAndDataPoints:
+    def test_ordered_list(sizes: list[int], iterations: int, is_float_test: bool, title_termination: str) -> TableAndDataPoints:
         (os_select_times, os_rank_times) = Tester._execute_test(sizes, iterations, DataStructures.OL, is_float_test) 
 
-        return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in una lista ordinata"), 
-                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in una lista ordinata"), 
-                Utils.data_and_table(sizes, os_select_times, caption="OS-Select in una lista ordinata", is_relative_time=True), 
-                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in una lista ordinata", is_relative_time=True))
+        return (Utils.table_and_medians(sizes, os_select_times, caption="OS-Select in una lista ordinata" + title_termination), 
+                Utils.table_and_medians(sizes, os_rank_times, caption="OS-Rank in una lista ordinata" + title_termination), 
+                Utils.table_and_medians(sizes, os_select_times, caption="OS-Select in una lista ordinata" + title_termination, is_relative_time=True), 
+                Utils.table_and_medians(sizes, os_rank_times, caption="OS-Rank in una lista ordinata" + title_termination, is_relative_time=True))
     
     @staticmethod
-    def test_bst(sizes: list[int], iterations: int, is_float_test: bool = False) -> TableAndDataPoints:
+    def test_bst(sizes: list[int], iterations: int, is_float_test: bool, title_termination: str) -> TableAndDataPoints:
         (os_select_times, os_rank_times) = Tester._execute_test(sizes, iterations, DataStructures.BST, is_float_test) 
 
-        return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un ABR"), 
-                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR"),
-                Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un ABR", is_relative_time=True), 
-                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un ABR", is_relative_time=True))
+        return (Utils.table_and_medians(sizes, os_select_times, caption="OS-Select in un ABR" + title_termination), 
+                Utils.table_and_medians(sizes, os_rank_times, caption="OS-Rank in un ABR" + title_termination),
+                Utils.table_and_medians(sizes, os_select_times, caption="OS-Select in un ABR" + title_termination, is_relative_time=True), 
+                Utils.table_and_medians(sizes, os_rank_times, caption="OS-Rank in un ABR" + title_termination, is_relative_time=True))
 
     @staticmethod
-    def test_augmented_rbt(sizes: list[int], iterations: int, is_float_test: bool = False) -> TableAndDataPoints:
+    def test_augmented_rbt(sizes: list[int], iterations: int, is_float_test: bool, title_termination: str) -> TableAndDataPoints:
         (os_select_times, os_rank_times) = Tester._execute_test(sizes, iterations, DataStructures.RBT, is_float_test) 
 
-        return (Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un albero RN aumentato"),
-                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato"),
-                Utils.data_and_table(sizes, os_select_times, caption="OS-Select in un albero RN aumentato", is_relative_time=True),
-                Utils.data_and_table(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato", is_relative_time=True))
+        return (Utils.table_and_medians(sizes, os_select_times, caption="OS-Select in un albero RN aumentato" + title_termination),
+                Utils.table_and_medians(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato" + title_termination),
+                Utils.table_and_medians(sizes, os_select_times, caption="OS-Select in un albero RN aumentato" + title_termination, is_relative_time=True),
+                Utils.table_and_medians(sizes, os_rank_times, caption="OS-Rank in un albero RN aumentato" + title_termination, is_relative_time=True))
 
     @staticmethod
     def _execute_test(sizes: list[int], iterations: int, data_structure: DataStructures, is_float_test: bool) -> Tuple[DataPoints, DataPoints]:
