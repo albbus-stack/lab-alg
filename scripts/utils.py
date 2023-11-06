@@ -66,8 +66,8 @@ class Utils:
         if title: plt.title(title)
         images_dir = "../latex/images/plots"
         
-        if "-s" in plot_filename:
-            images_dir += "/sm"
+        if "-s" in plot_filename and "-m" not in plot_filename and "-l" not in plot_filename:
+            images_dir += "/small"
         elif "-m" in plot_filename:
             images_dir += "/medium"
         else:
