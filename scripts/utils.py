@@ -64,8 +64,15 @@ class Utils:
     @staticmethod
     def save_plot(plot_filename: str, title: Optional[str] = None) -> None:
         if title: plt.title(title)
-
         images_dir = "../latex/images/plots"
+        
+        if "-s" in plot_filename:
+            images_dir += "/sm"
+        elif "-m" in plot_filename:
+            images_dir += "/medium"
+        else:
+            images_dir += "/large"
+
         if not os.path.exists(images_dir):
             os.makedirs(images_dir)
         plt.savefig(os.path.join(images_dir, plot_filename), bbox_inches='tight')
@@ -73,6 +80,14 @@ class Utils:
     @staticmethod
     def write_to_latex_file(filename: str, lines: list[str]) -> None:
         latex_dir = "../latex"
+        
+        if "-s" in filename:
+            latex_dir += "/small-tables"
+        elif "-m" in filename:
+            latex_dir += "/medium-tables"
+        else:
+            latex_dir += "/large-tables"
+        
         full_path = os.path.join(latex_dir, filename)
 
         _lines = []
