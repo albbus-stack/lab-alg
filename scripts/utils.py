@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-import numpy as np
 from typing import Optional, List, Tuple
 
 DataPoints = List[Tuple[float, List[float]]]
@@ -10,7 +9,7 @@ TableAndData = Tuple[List[str], List[float]]
 
 class Utils:
     @staticmethod
-    def data_and_table(sizes: list[int], times: DataPoints, caption: str, is_relative_time: Optional[bool] = False) -> TableAndData:
+    def table_and_medians(sizes: list[int], times: DataPoints, caption: str, is_relative_time: Optional[bool] = False) -> TableAndData:
         time_caption = "Mediana (s)"
         size_caption = "Dimensione (n)"
         yerr_caption = "Tempi -/+ (s)"
@@ -33,13 +32,15 @@ class Utils:
         df[yerr_caption] = df[yerr_caption].apply(lambda x: '-{:.1e}'.format(x[0]) + ', ' + '+{:.1e}'.format(x[1]))
 
         # Esportazione della tabella in formato LaTeX
-        segment_size = 40
+        segment_size = 50
         segments = [df[i:i+segment_size] for i in range(0, len(df), segment_size)]
         latex_tables: list[str] = []
 
+        table_caption = caption if not is_relative_time else caption + " (relativo)"
+
         for i, segment in enumerate(segments):
             if i == 0:
-                latex_tables.append(segment.style.to_latex(clines="all;data", label=caption, caption=caption, position_float="centering", column_format="|c|c|c|c|"))
+                latex_tables.append(segment.style.to_latex(clines="all;data", label=table_caption, caption=table_caption, position_float="centering", column_format="|c|c|c|c|"))
             else:
                 latex_tables.append(segment.style.to_latex(clines="all;data", position_float="centering", column_format="|c|c|c|c|"))
         
@@ -63,8 +64,15 @@ class Utils:
     @staticmethod
     def save_plot(plot_filename: str, title: Optional[str] = None) -> None:
         if title: plt.title(title)
-
         images_dir = "../latex/images/plots"
+        
+        if "-s" in plot_filename:
+            images_dir += "/sm"
+        elif "-m" in plot_filename:
+            images_dir += "/medium"
+        else:
+            images_dir += "/large"
+
         if not os.path.exists(images_dir):
             os.makedirs(images_dir)
         plt.savefig(os.path.join(images_dir, plot_filename), bbox_inches='tight')
@@ -72,6 +80,14 @@ class Utils:
     @staticmethod
     def write_to_latex_file(filename: str, lines: list[str]) -> None:
         latex_dir = "../latex"
+        
+        if "-s" in filename:
+            latex_dir += "/small-tables"
+        elif "-m" in filename:
+            latex_dir += "/medium-tables"
+        else:
+            latex_dir += "/large-tables"
+        
         full_path = os.path.join(latex_dir, filename)
 
         _lines = []

@@ -62,29 +62,3 @@ class BinarySearchTree:
                 return self._tree_size(root.left) + 1 + right_rank
             else:
                 return None
-
-if __name__ == "__main__":
-    # sizes = [100, 1000, 2500, 5000, 7500, 10000, 15000, 20000, 25000]
-    sizes = [10, 20, 30, 40, 50, 60, 70, 80, 100, 200, 300, 400, 500]
-    iterations = 50
-
-    ((st, mst), (kt, mkt), (st_rel, mst_rel), (kt_rel, mkt_rel)) = Tester.test_bst(sizes, iterations)
-    Utils.plot(sizes, mst, "OS-Select")
-    Utils.plot(sizes, mkt, "OS-Rank")
-    Utils.save_plot("abr", title="OS-Select e OS-Rank in un ABR")
-    Utils.clear_plot()
-
-    Utils.plot(sizes, mst_rel, "OS-Select")
-    Utils.plot(sizes, mkt_rel, "OS-Rank")
-    Utils.save_plot("abr-rel", title="OS-Select e OS-Rank relativi in un ABR")
-    Utils.clear_plot()
-
-    ((st, mst), (kt, mkt), (st_rel, mst_rel), (kt_rel, mkt_rel)) = Tester.test_bst(sizes, iterations, is_float_test=True)
-    Utils.plot(sizes, mst, "OS-Select")
-    Utils.plot(sizes, mkt, "OS-Rank")
-    Utils.save_plot("abr-float", title="OS-Select e OS-Rank in un ABR con float")
-    Utils.clear_plot()
-
-    Utils.plot(sizes, mst_rel, "OS-Select")
-    Utils.plot(sizes, mkt_rel, "OS-Rank")
-    Utils.save_plot("abr-float-rel", title="OS-Select e OS-Rank relativi in un ABR con float")
