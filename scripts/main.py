@@ -90,11 +90,11 @@ if __name__ == "__main__":
             Utils.clear_plot()
 
             # Tabelle per le tre strutture dati con tempi assoluti
-            Utils.write_to_latex_file("tabelle-lista-ordinata" + filename_termination + ".tex", [*ll_st, *ll_kt])
-            Utils.write_to_latex_file("tabelle-abr" + filename_termination + ".tex", [*abr_st, *abr_kt])
-            Utils.write_to_latex_file("tabelle-rn-aumentato" + filename_termination + ".tex", [*rn_st, *rn_kt])
+            Utils.write_to_latex_file("tabelle-lista-ordinata" + filename_termination, [ll_st, ll_kt])
+            Utils.write_to_latex_file("tabelle-abr" + filename_termination, [abr_st, abr_kt])
+            Utils.write_to_latex_file("tabelle-rn-aumentato" + filename_termination, [rn_st, rn_kt])
 
             # Tabelle per le tre strutture dati con tempi relativi
-            Utils.write_to_latex_file("tabelle-lista-ordinata" + filename_termination + "-rel.tex", [*ll_st_rel, *ll_kt_rel])
-            Utils.write_to_latex_file("tabelle-abr" + filename_termination + "-rel.tex", [*abr_st_rel, *abr_kt_rel])
-            Utils.write_to_latex_file("tabelle-rn-aumentato" + filename_termination + "-rel.tex", [*rn_st_rel, *rn_kt_rel])
+            Utils.write_to_latex_file("tabelle-lista-ordinata" + filename_termination + "-rel", [ll_st_rel, ll_kt_rel])
+            Utils.write_to_latex_file("tabelle-abr" + filename_termination + "-rel", [abr_st_rel, abr_kt_rel])
+            Utils.write_to_latex_file("tabelle-rn-aumentato" + filename_termination + "-rel", [rn_st_rel, rn_kt_rel])

@@ -5,7 +5,7 @@ from typing import Optional, List, Tuple
 
 DataPoints = List[Tuple[float, List[float]]]
 
-TableAndData = Tuple[List[str], List[float]]
+TableAndData = Tuple[Tuple[pd.DataFrame, str], List[float]]
 
 class Utils:
     @staticmethod
@@ -28,23 +28,10 @@ class Utils:
         data = {size_caption: sizes, time_caption: medians, yerr_caption: yerrs}
 
         df = pd.DataFrame(data)
-        df[time_caption] = df[time_caption].apply(lambda x: '{:.1e}'.format(x))
-        df[yerr_caption] = df[yerr_caption].apply(lambda x: '-{:.1e}'.format(x[0]) + ', ' + '+{:.1e}'.format(x[1]))
+        df[time_caption] = df[time_caption].apply(lambda x: "{:.1e}".format(x))
+        df[yerr_caption] = df[yerr_caption].apply(lambda x: "-{:.1e}".format(x[0]) + ", " + "+{:.1e}".format(x[1]))
 
-        # Esportazione della tabella in formato LaTeX
-        segment_size = 50
-        segments = [df[i:i+segment_size] for i in range(0, len(df), segment_size)]
-        latex_tables: list[str] = []
-
-        table_caption = caption if not is_relative_time else caption + " (relativo)"
-
-        for i, segment in enumerate(segments):
-            if i == 0:
-                latex_tables.append(segment.style.to_latex(clines="all;data", label=table_caption, caption=table_caption, position_float="centering", column_format="|c|c|c|c|"))
-            else:
-                latex_tables.append(segment.style.to_latex(clines="all;data", position_float="centering", column_format="|c|c|c|c|"))
-        
-        return (latex_tables, medians)
+        return ((df, caption if not is_relative_time else caption + " (relativo)"), medians)
 
     @staticmethod
     def plot(sizes: list[int], medians: list[float], label: Optional[str] = None) -> None:
@@ -64,7 +51,7 @@ class Utils:
     @staticmethod
     def save_plot(plot_filename: str, title: Optional[str] = None) -> None:
         if title: plt.title(title)
-        images_dir = "../latex/images/plots"
+        images_dir = "./images/plots"
         
         if "-s" in plot_filename and "-m" not in plot_filename and "-l" not in plot_filename:
             images_dir += "/small"
@@ -75,12 +62,13 @@ class Utils:
 
         if not os.path.exists(images_dir):
             os.makedirs(images_dir)
-        plt.savefig(os.path.join(images_dir, plot_filename), bbox_inches='tight')
+        plt.savefig(os.path.join(images_dir, plot_filename), bbox_inches="tight")
 
     @staticmethod
-    def write_to_latex_file(filename: str, lines: list[str]) -> None:
-        latex_dir = "../latex"
-        
+    def write_to_latex_file(filename: str, df_and_captions: list[tuple[pd.DataFrame, str]]) -> None:
+        lines: list[str] = []
+
+        latex_dir = "./latex"
         if "-s" in filename:
             latex_dir += "/small-tables"
         elif "-m" in filename:
@@ -88,8 +76,23 @@ class Utils:
         else:
             latex_dir += "/large-tables"
         
-        full_path = os.path.join(latex_dir, filename)
+        # Salvataggio dei csv
+        os.makedirs(latex_dir, exist_ok=True)
+        df_and_captions[0][0].to_csv(os.path.join(latex_dir, filename + "-os-select.csv"), index=False)
+        df_and_captions[1][0].to_csv(os.path.join(latex_dir, filename + "-os-rank.csv"), index=False)
 
+        # Esportazione della tabella in formato LaTeX
+        for (df, table_caption) in df_and_captions:
+            segment_size = 50
+            segments = [df[i:i+segment_size] for i in range(0, len(df), segment_size)]
+
+            for i, segment in enumerate(segments):
+                if i == 0:
+                    lines.append(segment.style.to_latex(clines="all;data", label=table_caption, caption=table_caption, position_float="centering", column_format="|c|c|c|c|"))
+                else:
+                    lines.append(segment.style.to_latex(clines="all;data", position_float="centering", column_format="|c|c|c|c|"))
+        
+        # Salvataggio delle tabelle LaTeX
         _lines = []
         for line in lines:
             _lines.append(
@@ -102,9 +105,9 @@ class Utils:
                 )
             )
         
+        full_path = os.path.join(latex_dir, filename + ".tex")
         try:
-            os.makedirs(latex_dir, exist_ok=True)
-            with open(full_path, 'w') as file:
-                file.write('\n'.join(_lines))
+            with open(full_path, "w") as file:
+                file.write("\n".join(_lines))
         except Exception as e:
             print(f"Si è verificato un errore durante la scrittura del file '{full_path}': {str(e)}")

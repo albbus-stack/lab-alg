@@ -75,7 +75,7 @@ class Tester:
                 ds.insert(item)
 
             for i in range(iterations):
-                print(f'{data_structure.name} -', 'FLOAT' if is_float_test else 'INT',  '- Dimensione:', size, 'Iterazione:', i+1)
+                print(f"{data_structure.name} -", "FLOAT" if is_float_test else "INT",  "- Dimensione:", size, "Iterazione:", i+1)
 
                 k = random.randint(1, size)
                 start_time = timer()
