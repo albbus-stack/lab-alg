@@ -28,6 +28,13 @@
   \href{#2}{#1}\footnote{\url{#2}}%
 }
 
+% STILE LABEL AL TESTO%
+\newcommand*{\textlabel}[2]{%
+  \edef\@currentlabel{#1}
+  \phantomsection
+  #1\label{#2}
+}
+
 % STILE BLOCCHI DI CODICE %
 \definecolor{bgTitleRed}{RGB}{85,45,50}
 \usepackage[T1]{fontenc}
@@ -155,7 +162,7 @@ In generale, l'implementazione con l'albero rosso-nero aumentato con l'attributo
 	\centering
 	\begin{tabular}{|c|c|c|c|}
 		\hline
-		                   & Lista ordinata & \hspace*{2em}ABR\hspace*{2em} & ARN aumentato \\
+		& Lista ordinata & \hspace*{2em}ABR\hspace*{2em} & ARN aumentato \\
 		\hline
 		\textbf{os-select} & $O(k)$         & $O(\log n)$                   & $O(\log n)$   \\
 		\hline
@@ -175,7 +182,7 @@ Per sviluppare il codice ed eseguire tutti i test, ottenendo le tabelle e i graf
 	Host: Google Compute Engine 
 	Kernel: 6.1.54-060154-generic 
 	CPU: AMD EPYC 7B13 (16 cores) @ 2.449GHz 
-	Memory: 30099MiB / 64297MiB
+	Memory: 64297MiB
 \end{bashCode}
 
 \subsection{Dimensione e popolazione delle strutture}
@@ -183,24 +190,25 @@ Per sviluppare il codice ed eseguire tutti i test, ottenendo le tabelle e i graf
 E' fondamentale eseguire i test su diverse dimensioni delle strutture dati per valutare come le prestazioni variano con l'aumento del numero di elementi. Andremo a testare le prestazioni su insiemi di dati di dimensioni:
 \begin{enumerate}
 	\setlength\itemsep{-0.25em}
-	\item 10-1000
-	\item 1000-10000
+	\item 10 - 1000 (\textit{Dimensioni ridotte})
+	\item 1000 - 10000 (\textit{Dimensioni medie})
+	\item 10000 - 20000 (\textit{Dimensioni elevate})
 \end{enumerate}
 
-Nel primo caso stiamo considerando strutture dati con dimensioni ridotte, nel secondo caso invece le dimensioni sono abbastanza elevate da esemplificare anche strutture più grandi. Oltretutto per il primo intervallo i test verranno eseguiti su ogni dimensione tra 10 e 1000 con step 10 (10, 20, 30, ...). Per il secondo intervallo le dimensioni sono scelte in maniera più sparsa a causa del maggior tempo di esecuzione (con step di 500). \vspace{1em}
+Nel primo caso stiamo considerando strutture dati con dimensioni ridotte, nel secondo caso invece le dimensioni sono abbastanza elevate da esemplificare anche strutture più grandi. Per il primo intervallo i test verranno eseguiti su ogni dimensione tra 10 e 1000 con passo \textbf{10} (10, 20, 30, ...). Per il secondo intervallo le dimensioni sono scelte in maniera più sparsa a causa del maggior tempo di esecuzione (con passo di \textbf{100}). Per il terzo intervallo invece sono eseguite con passo di \textbf{500}. \vspace{1em}
 
 Ogni struttura dati, prima dei test sulle statistiche d'ordine, viene popolata in modo casuale con:
 \begin{enumerate}
 	\setlength\itemsep{-0.25em}
-	\item \textit{Valori interi} compresi tra 1 e la dimensione della struttura (oppure 1000 se questa è inferiore)
-	\item \textit{Valori float} compresi tra 1 e la dimensione della struttura
+	\item \textit{Valori interi} random compresi tra 1 e 5000
+	\item \textit{Valori float} random compresi tra 1 e 1000
 \end{enumerate}
 
 \subsection{Strategia di iterazione e misurazione}
 
-Per ogni struttura dati e per ogni statistica d'ordine dinamica verranno eseguiti i test un certo numero di iterazioni (consideriamo 250 come numero sufficiente) per ogni dimensione specificata. Per ognuna di queste iterazioni, le operazioni saranno svolte in modo casuale sugli elementi della struttura dati, andando a simulare uno scenario realistico di utilizzo delle statistiche d'ordine. 
+Per ogni struttura dati e per ogni statistica d'ordine dinamica verranno eseguiti i test un certo numero di iterazioni (consideriamo \textbf{1000} come numero sufficiente) per ogni dimensione specificata. Per ognuna di queste iterazioni, le operazioni saranno svolte in modo casuale sugli elementi della struttura dati, andando a simulare uno scenario realistico di utilizzo delle statistiche d'ordine. 
 
-Raccoglieremo poi la mediana e deviazione standard dei tempi di esecuzione per ogni dimensione, producendo i rispettivi grafici. Questo metodo riduce l'impatto di variazioni casuali e fornisce risultati più stabili, andando comunque a visualizzare tutto l'intervallo di confidenza delle operazioni compiute.
+Raccoglieremo poi la mediana dei tempi di esecuzione per ogni dimensione, producendo i rispettivi grafici. Questo metodo riduce l'impatto di variazioni casuali e fornisce risultati più stabili, andando comunque a visualizzare tutto l'intervallo di confidenza delle operazioni compiute.
 
 Per ogni misurazione saranno proposti due grafici, uno che usa il tempo effettivo di esecuzione delle istruzioni e un altro che utilizza un tempo relativo alla dimensione dell'insieme di dati (utile per visualizzare la complessità computazionale nei vari casi), calcolati come segue:
 \begin{enumerate}
@@ -209,7 +217,9 @@ Per ogni misurazione saranno proposti due grafici, uno che usa il tempo effettiv
 	\item \textit{Tempo relativo}: \verb|(end_time - start_time) / size|
 \end{enumerate}
 
-Tutte le misurazioni dei tempi sono effettuate usando la libreria \verb|timeit| che ci fornisce risultati di esecuzione accurati.
+Tutte le misurazioni dei tempi sono effettuate usando la libreria \verb|timeit| che ci fornisce risultati di esecuzione accurati. 
+
+I test completi su tutte le strutture sono eseguiti nel file \verb|main.py|, se si vuole eseguire il test solo per una certa struttura è sufficiente usare il comando \verb|python [data_structure].py| dato che ogni file implementa i suoi test nel proprio programma principale.
 
 \newpage
 \section{Documentazione del codice}
@@ -244,8 +254,8 @@ La struttura delle classi è osservabile nel diagramma UML in \hyperref[fig:clas
 \begin{itemize}
 	\setlength\itemsep{0em}
 	\item \verb|value|: il valore memorizzato nel nodo
-	\item \verb|left|: il riferimento al figlio sinistro
-	\item \verb|right|: il riferimento al figlio destro
+	\item \verb|left|: il riferimento al figlio sinistro del nodo
+	\item \verb|right|: il riferimento al figlio destro del nodo
 \end{itemize}
 
 {\setlength{\parindent}{0em} \texttt{\textbf{BinarySearchTree}}}
@@ -264,8 +274,8 @@ La struttura delle classi è osservabile nel diagramma UML in \hyperref[fig:clas
 	\setlength\itemsep{0em}
 	\item \verb|color|: il colore del nodo (di tipo \texttt{Color}: \texttt{RED} o \texttt{BLACK})
 	\item \verb|size|: il numero di nodi nel sottoalbero radicato in questo nodo
-	\item \verb|left|: il riferimento al figlio sinistro
-	\item \verb|right|: il riferimento al figlio destro
+	\item \verb|left|: il riferimento al figlio sinistro del nodo
+	\item \verb|right|: il riferimento al figlio destro del nodo
 	\item \verb|value|: il valore memorizzato nel nodo (ereditato dalla classe \texttt{TreeNode})
 \end{itemize}
 
@@ -301,53 +311,318 @@ Queste classi contengono tutti metodi statici che sono stati raggruppati semanti
 {\setlength{\parindent}{0em} \texttt{\textbf{Utils}}}
 \begin{itemize}
 	\setlength\itemsep{0em}
-	\item \verb|data_and_table(sizes, times, caption, plot_filename)|: genera e restituisce mediane e deviazioni standard insieme alla stringa in \LaTeX\ della corrispettiva tabella per le dimensioni e i tempi di esecuzione specificati
+	\item \verb|data_and_table(sizes, times, caption, plot_filename)|: genera e\newline restituisce mediane e deviazioni standard insieme alla stringa in \LaTeX\ della corrispettiva tabella per le dimensioni e i tempi di esecuzione specificati
 	\item \verb|plot(sizes, medians, dev_std, label)|: crea un grafico con mediane e deviazioni standard
 	\item \verb|clear_plot()|: cancella il grafico corrente
-	\item \verb|save_plot(plot_filename, title)|: salva il grafico corrente in un \texttt{.png} con un titolo specificato
+	\item \verb|save_plot(plot_filename, title)|: salva il grafico corrente in un \verb|.png| con un titolo specificato
 	\item \verb|write_to_latex_file(filename, lines)|: scrive le linee in un file \TeX\ con il nome specificato
 \end{itemize}
 
+\newpage
 \section{Analisi dei risultati sperimentali}
 
-In questa sezione, condurremo un'analisi completa dei risultati sperimentali. Discuteremo le discrepanze tra le prestazioni attese e quelle effettivamente osservate, se presenti, e offriremo interpretazioni basate sui dati raccolti. 
+In questa sezione verranno analizzati risultati sperimentali, discutendo le discrepanze tra le prestazioni attese e quelle effettivamente osservate, se presenti, e verranno offerte interpretazioni basate esclusivamente sui dati raccolti. Tutti i grafici presenti in questa sezione hanno illustrata la mediana per le 1000 iterazioni relative ad una dimensione di test come descritto precedentemente. I dati illustrati sono riportati nelle tabelle dell'appendice, corredati anche delle deviazioni dal minimo e dal massimo rispetto alla mediana, a cui viene fatto riferimento nel testo.
 
-Riferimenti alle tabelle: \ref{OS-Select in una lista ordinata}, \ref{OS-Rank in una lista ordinata}, \ref{OS-Select in un ABR}, \ref{OS-Rank in un ABR}, \ref{OS-Select in un albero RN aumentato}, \ref{OS-Rank in un albero RN aumentato}.
+\subsection{Dimensioni ridotte}
 
-\subsection{os-select}
-
-\subsubsection{Dimensioni ridotte}
 \begin{figure}[H]
-	\centering
-	\includegraphics[width=\linewidth-5em]{os-select.png}
+	\subfloat[Tempi assoluti (interi)]{{\includegraphics[width=\linewidth/2]{plots/small/os-select-s} }}
+	\subfloat[Tempi relativi (interi)]{{\includegraphics[width=\linewidth/2-1em]{plots/small/os-select-s-rel} }}
+    \newline
+    \subfloat[Tempi assoluti (float)]{{\includegraphics[width=\linewidth/2]{plots/small/os-select-s-float} }}
+	\subfloat[Tempi relativi (float)]{{\includegraphics[width=\linewidth/2-1.25em]{plots/small/os-select-s-float-rel} }}
 	\caption{Tempi di Os-select}
-	\label{fig:os-select}
+	\label{fig:os-select-s}
 \end{figure}
-\subsubsection{Dimensioni elevate}
+\newpage
 
-\subsection{os-rank}
-\subsubsection{Dimensioni ridotte}
+Come possiamo vedere in \hyperref[fig:os-select-s]{figura 4}, l'operazione di \textit{Os-select} è molto efficiente per gli alberi rosso-neri aumentati; questo risultato è coerente con la spiegazione teorica fornita precedentemente.
+
+Osserviamo però che non vale lo stesso per gli alberi binari, infatti, su insiemi di dimensioni ridotte sono molto meno efficienti di una lista ordinata; questo è dovuto alla maggiore astrazione che essi offrono, che però non è direttamente utile al calcolo delle statistiche d'ordine dinamiche su un insieme ristretto di valori.
+
+Semplificando questi risultati possiamo osservare che per insiemi di dimensioni da circa 50 a 1000, popolati con interi o float, le tre strutture dati eseguono \textit{Os-select} come segue, dalla più veloce alla più lenta:
+
+\begin{enumerate}
+    \item \textbf{albero rosso nero aumentato} con media di circa \(0.002\:ms\)
+    \item \textbf{lista ordinata} con media di circa \(0.015\:ms\)
+    \item \textbf{albero binario} con media di circa \(0.1\:ms\)
+\end{enumerate}
+
+Per strutture con circa meno di 50 elementi vediamo dai grafici relativi che potrebbe essere conveniente usare una lista ordinata al posto di aggiungere più complessità con un albero rosso nero aumentato.
+
+Vediamo che questo trend è ovviamente confermato dai grafici con tempi relativi (che analizzeremo più approfonditamente nelle conclusioni) e anche dai grafici per i dati a virgola mobile, dove viene riscontrato un piccolo aumento dei tempi medi per le tre strutture dati. La differenza più interessante tra i test con interi e quelli con float è quella dell'aumento considerevole della variabilità dei test rispetto alla mediana (osservabile dalle tabelle), rendendo il tempo di esecuzione delle operazioni più difficile da predire.
+\newline
+\newline
+\textit{Riferimenti alle tabelle}: \hyperref[label:lista-ordinata-s-os-select]{Os-select in una lista ordinata (int)}, \hyperref[label:lista-ordinata-s-float-os-select]{Os-select in una lista ordinata (float)}, \hyperref[label:abr-s-os-select]{Os-select in un ABR (int)}, \hyperref[label:abr-s-float-os-select]{Os-select in un ABR (float)}, \hyperref[label:rn-aumentato-s-os-select]{Os-select in un albero RN aumentato (int)}, \hyperref[label:rn-aumentato-s-float-os-select]{Os-select in un albero RN aumentato (float)}.
 
 \begin{figure}[H]
-    \centering
-	\includegraphics[width=\linewidth]{os-rank.png}
+	\subfloat[Tempi assoluti (interi)]{{\includegraphics[width=\linewidth/2]{plots/small/os-rank-s} }}
+	\subfloat[Tempi relativi (interi)]{{\includegraphics[width=\linewidth/2-0.1em]{plots/small/os-rank-s-rel} }}
+    \newline
+    \subfloat[Tempi assoluti (float)]{{\includegraphics[width=\linewidth/2]{plots/small/os-rank-s-float} }}
+	\subfloat[Tempi relativi (float)]{{\includegraphics[width=\linewidth/2+0.25em]{plots/small/os-rank-s-float-rel} }}
 	\caption{Tempi di Os-rank}
-	\label{fig:os-rank}
+	\label{fig:os-rank-s}
 \end{figure}
 
-\subsubsection{Dimensioni elevate}
+Le stesse conclusioni sono valide in linea generale anche per \textit{Os-Rank} come osserviamo in \hyperref[fig:os-rank-s]{figura 5}, l'unica cosa significante è che i tempi dell'\textbf{albero binario} migliorano notevolmente, infatti abbiamo che la media dei risultati si riduce fino a circa \(0.025\:ms\), rimanendo comunque meno efficiente di una lista ordinata.
+\newline
+\newline
+\textit{Riferimenti alle tabelle}: \hyperref[label:lista-ordinata-s-os-rank]{Os-rank in una lista ordinata (int)}, \hyperref[label:lista-ordinata-s-float-os-rank]{Os-rank in una lista ordinata (float)}, \hyperref[label:abr-s-os-rank]{Os-rank in un ABR (int)}, \hyperref[label:abr-s-float-os-rank]{Os-rank in un ABR (float)}, \hyperref[label:rn-aumentato-s-os-rank]{Os-rank in un albero RN aumentato (int)}, \hyperref[label:rn-aumentato-s-float-os-rank]{Os-rank in un albero RN aumentato (float)}.
+\newline
+\newline
+\textit{Riferimenti ai grafici singoli}: \hyperref[label:lista-ordinata-s]{Lista ordinata (int)}, \hyperref[label:lista-ordinata-s-float]{Lista ordinata (float)}, \hyperref[label:abr-s]{ABR (int)}, \hyperref[label:abr-s-float]{ABR (float)}, \hyperref[label:rn-aumentato-s]{Albero RN aumentato (int)}, \hyperref[label:rn-aumentato-s-float]{Albero RN aumentato (float)}.
 
+\newpage
+\subsection{Dimensioni medie}
+
+\begin{figure}[H]
+	\subfloat[Tempi assoluti (interi)]{{\includegraphics[width=\linewidth/2]{plots/medium/os-select-m} }}
+	\subfloat[Tempi relativi (interi)]{{\includegraphics[width=\linewidth/2-0.75em]{plots/medium/os-select-m-rel} }}
+    \newline
+    \subfloat[Tempi assoluti (float)]{{\includegraphics[width=\linewidth/2]{plots/medium/os-select-m-float} }}
+	\subfloat[Tempi relativi (float)]{{\includegraphics[width=\linewidth/2-0.75em]{plots/medium/os-select-m-float-rel} }}
+	\caption{Tempi di Os-select}
+	\label{fig:os-select-m}
+\end{figure}
+
+Per le strutture da dimensione 1000 a 10000 vediamo dalla \hyperref[fig:os-select-m]{figura 6} che l'andamento delle prestazioni di \textit{Os-Select} è analogo, notiamo però nel grafico dei tempi relativi per gli interi che la complessità dell'albero binario si avvicina sempre di più a quella della lista ordinata all'aumentare delle dimensioni. I risultati approssimati sono come segue:
+
+\begin{enumerate}
+    \item \textbf{albero rosso nero aumentato} con media di circa \(0.003\:ms\)
+    \item \textbf{lista ordinata} con media di circa \(0.25\:ms\)
+    \item \textbf{albero binario} con media di circa \(0.4\:ms\)
+\end{enumerate}
+
+Per i dati a virgola mobile non vediamo bene questo andamento, però la differenza relativa tra le prestazioni dell'albero binario e quelle della lista ordinata è inferiore a quello osservato per le strutture di dimensioni ridotte. 
+\newline
+\textit{Riferimenti alle tabelle}: \hyperref[label:lista-ordinata-m-os-select]{Os-select in una lista ordinata (int)}, \hyperref[label:lista-ordinata-m-float-os-select]{Os-select in una lista ordinata (float)}, \hyperref[label:abr-m-os-select]{Os-select in un ABR (int)}, \hyperref[label:abr-m-float-os-select]{Os-select in un ABR (float)}, \hyperref[label:rn-aumentato-m-os-select]{Os-select in un albero RN aumentato (int)}, \hyperref[label:rn-aumentato-m-float-os-select]{Os-select in un albero RN aumentato (float)}.
+
+\begin{figure}[H]
+	\subfloat[Tempi assoluti (interi)]{{\includegraphics[width=\linewidth/2]{plots/medium/os-rank-m} }}
+	\subfloat[Tempi relativi (interi)]{{\includegraphics[width=\linewidth/2-1em]{plots/medium/os-rank-m-rel} }}
+    \newline
+    \subfloat[Tempi assoluti (float)]{{\includegraphics[width=\linewidth/2]{plots/medium/os-rank-m-float} }}
+	\subfloat[Tempi relativi (float)]{{\includegraphics[width=\linewidth/2-1em]{plots/medium/os-rank-m-float-rel} }}
+	\caption{Tempi di Os-rank}
+	\label{fig:os-rank-m}
+\end{figure}
+
+Vediamo dalla \hyperref[fig:os-rank-m]{figura 7} che la curva dei tempi di \textit{Os-rank} per un albero binario interseca quella dei tempi per una lista ordinata intorno ai 5000 elementi, questo andamento è anche confermato dal grafico degli andamenti relativi. Le medie approssimative per \textit{Os-rank} sono analoghe a quelle di Os-select, tranne l'\textbf{albero binario} che ha media di circa \(0.2\:ms\), superando quindi la lista ordinata su questa operazione.
+
+Non vale lo stesso per i dati a virgola mobile, infatti gli alberi binari sono comunque meno performanti per \textit{Os-rank} rispetto alle liste ordinate; l'andamento delle due curve dei tempi relativi è oltretutto parallelo con una differenza di circa \(0.2\:ms\) in tempo assoluto.
+\newline
+\textit{Riferimenti alle tabelle}: \hyperref[label:lista-ordinata-m-os-rank]{Os-rank in una lista ordinata (int)}, \hyperref[label:lista-ordinata-m-float-os-rank]{Os-rank in una lista ordinata (float)}, \hyperref[label:abr-m-os-rank]{Os-rank in un ABR (int)}, \hyperref[label:abr-m-float-os-rank]{Os-rank in un ABR (float)}, \hyperref[label:rn-aumentato-m-os-rank]{Os-rank in un albero RN aumentato (int)}, \hyperref[label:rn-aumentato-m-float-os-rank]{Os-rank in un albero RN aumentato (float)}.
+\newline
+\newline
+\textit{Riferimenti ai grafici singoli}: \hyperref[label:lista-ordinata-m]{Lista ordinata (int)}, \hyperref[label:lista-ordinata-m-float]{Lista ordinata (float)}, \hyperref[label:abr-m]{ABR (int)}, \hyperref[label:abr-m-float]{ABR (float)}, \hyperref[label:rn-aumentato-m]{Albero RN aumentato (int)}, \hyperref[label:rn-aumentato-m-float]{Albero RN aumentato (float)}.
+
+\subsection{Dimensioni elevate}
+
+\begin{figure}[H]
+	\subfloat[Tempi assoluti (interi)]{{\includegraphics[width=\linewidth/2]{plots/large/os-select-l} }}
+	\subfloat[Tempi relativi (interi)]{{\includegraphics[width=\linewidth/2-1.25em]{plots/large/os-select-l-rel} }}
+    \newline
+    \subfloat[Tempi assoluti (float)]{{\includegraphics[width=\linewidth/2]{plots/large/os-select-l-float} }}
+	\subfloat[Tempi relativi (float)]{{\includegraphics[width=\linewidth/2-1em]{plots/large/os-select-l-float-rel} }}
+	\caption{Tempi di Os-select}
+	\label{fig:os-select-l}
+\end{figure}
+
+Finalmente per dimensioni superiori circa ai 12000 elementi vediamo che, per l'operazione di \textit{Os-select}, l'albero binario è più efficiente rispetto alla lista ordinata. Questo risultato è in linea con la discussione teorica condotta a all'inizio della relazione. Osserviamo oltretutto dal grafico dei tempi relativi per dati interi in \hyperref[fig:os-select-l]{figura 8} che la curva dell'albero binario scende rapidamente, mentre quella della lista ordinata rimane costante. 
+
+Riassumendo i risultati abbiamo che una operazione di \textit{Os-select} impiega:
+\begin{enumerate}
+    \item \textbf{albero rosso nero aumentato} circa \(0.0035\:ms\)
+    \item \textbf{albero binario} circa \(0.53\:ms\)
+    \item \textbf{lista ordinata} circa \(0.7\:ms\)
+\end{enumerate}
+
+Per dati a virgola mobile anche in questo caso non valgono le stesse considerazioni, infatti rimane comunque più performante la \textbf{lista ordinata}. Supponiamo comunque che a dimensioni ancora più elevate riscontreremo lo stesso risultato degli interi, trovando un punto in cui le due curve si intersecano e i tempi dell'albero binario sono migliori di quelli della lista ordinata da quella dimensione in poi.
+\newline
+\newline
+\textit{Riferimenti alle tabelle}: \hyperref[label:lista-ordinata-l-os-select]{Os-select in una lista ordinata (int)}, \hyperref[label:lista-ordinata-l-float-os-select]{Os-select in una lista ordinata (float)}, \hyperref[label:abr-l-os-select]{Os-select in un ABR (int)}, \hyperref[label:abr-l-float-os-select]{Os-select in un ABR (float)}, \hyperref[label:rn-aumentato-l-os-select]{Os-select in un albero RN aumentato (int)}, \hyperref[label:rn-aumentato-l-float-os-select]{Os-select in un albero RN aumentato (float)}.
+
+\begin{figure}[H]
+	\subfloat[Tempi assoluti (interi)]{{\includegraphics[width=\linewidth/2]{plots/large/os-rank-l} }}
+	\subfloat[Tempi relativi (interi)]{{\includegraphics[width=\linewidth/2-1.1em]{plots/large/os-rank-l-rel} }}
+    \newline
+    \subfloat[Tempi assoluti (float)]{{\includegraphics[width=\linewidth/2]{plots/large/os-rank-l-float} }}
+	\subfloat[Tempi relativi (float)]{{\includegraphics[width=\linewidth/2-1.1em]{plots/large/os-rank-l-float-rel} }}
+	\caption{Tempi di Os-rank}
+	\label{fig:os-rank-l}
+\end{figure}
+
+In \hyperref[fig:os-rank-l]{figura 9} osserviamo che l'andamento di \textit{Os-rank} per un albero binario è confermato, infatti la sua curva dei tempi relativi continua a decrescere con l'aumentare della dimensione. Al contrario i tempi per la lista ordinata peggiorano leggermente, infatti avremo:
+
+\begin{enumerate}
+    \item \textbf{albero binario} circa \(0.25\:ms\)
+    \item \textbf{lista ordinata} circa \(0.8\:ms\)
+\end{enumerate}
+
+Per i dati a virgola mobile, la \textbf{lista ordinata }continua comunque ad essere più efficiente degli alberi binari ma la differenza tra le curve dei tempi relativi si assottiglia a circa \(0.1\:ms\) in tempo assoluto. Abbiamo quindi un miglioramento del 50\% rispetto a strutture con dimensione media, supponendo quindi che a dimensioni più elevate di 20000 ci sia un punto di intersezione dove l'andamento dei tempi per l'albero binario si inverta rispetto a quello della lista ordinata. 
+\newline
+\newline
+\textit{Riferimenti alle tabelle}: \hyperref[label:lista-ordinata-l-os-rank]{Os-rank in una lista ordinata (int)}, \hyperref[label:lista-ordinata-l-float-os-rank]{Os-rank in una lista ordinata (float)}, \hyperref[label:abr-l-os-rank]{Os-rank in un ABR (int)}, \hyperref[label:abr-l-float-os-rank]{Os-rank in un ABR (float)}, \hyperref[label:rn-aumentato-l-os-rank]{Os-rank in un albero RN aumentato (int)}, \hyperref[label:rn-aumentato-l-float-os-rank]{Os-rank in un albero RN aumentato (float)}.
+\newline
+\newline
+\textit{Riferimenti ai grafici singoli}: \hyperref[label:lista-ordinata-l]{Lista ordinata (int)}, \hyperref[label:lista-ordinata-l-float]{Lista ordinata (float)}, \hyperref[label:abr-l]{ABR (int)}, \hyperref[label:abr-l-float]{ABR (float)}, \hyperref[label:rn-aumentato-l]{Albero RN aumentato (int)}, \hyperref[label:rn-aumentato-l-float]{Albero RN aumentato (float)}.
+
+\newpage
 \section{Conclusioni}
 
-Concluderemo la relazione con un riepilogo delle scoperte chiave e delle implicazioni dei risultati sperimentali. Discuteremo anche eventuali sviluppi futuri e possibili miglioramenti.
+Abbiamo esaminato le prestazioni di \textit{Os-select} e \textit{Os-rank} per le tre strutture (liste ordinate, alberi binari e alberi rosso-neri aumentati) in base alle dimensioni dei dati, distinguendo tra dimensioni ridotte, dimensioni piccole, medie ed elevate e considerando sia dati interi che dati a virgola mobile. Ecco le conclusioni principali derivate dai nostri risultati:
+
+\begin{itemize}
+\item \textbf{Dimensioni piccole} (meno di 50 elementi): le liste ordinate dimostrano di essere la scelta più efficiente. La loro semplicità e la bassa complessità li rendono ideali per piccoli insiemi di dati, superando sia gli alberi binari che gli alberi rosso-neri aumentati in termini di prestazioni.
+
+\item \textbf{Dimensioni ridotte} (circa 50-1000 elementi): gli alberi rosso-neri aumentati sono la scelta più efficiente, seguiti dalle liste ordinate. Gli alberi binari sono meno efficienti in questo contesto a causa della maggiore astrazione che offrono, che non è direttamente utile per il calcolo delle statistiche d'ordine su piccoli insiemi di dati.
+
+\item \textbf{Dimensioni medie} (circa 1000-12000 elementi): gli alberi rosso-neri aumentati rimangono la scelta più efficiente, seguiti dalle liste ordinate. Tuttavia, gli alberi binari diventano progressivamente più efficienti, avvicinandosi alle prestazioni delle liste ordinate al crescere delle dimensioni.
+
+\item \textbf{Dimensioni elevate} (circa 12000-20000 elementi): gli alberi binari superano le liste ordinate in termini di prestazioni per \textit{Os-select} ma non per \textit{Os-rank}, su valori interi. Questo risultato è in linea con le previsioni teoriche. Per dati a virgola mobile, le liste ordinate rimangono più efficienti, anche se la differenza si riduce. Possiamo supporre che a dimensioni ancora più elevate il risultato per \textit{Os-rank} sia analogo a quello di \textit{Os-select}. 
+\end{itemize}
+
+Gli alberi rosso-neri aumentati sono una scelta efficace per dimensioni ridotte, medie e elevate, mentre gli alberi binari diventano vantaggiosi per insiemi di dimensioni elevate con dati interi. Le liste ordinate rimangono una scelta affidabile per dati a virgola mobile, ma potrebbero essere superate dagli alberi binari a dimensioni molto elevate.
+In generale, la scelta della struttura dati dovrebbe essere guidata dalle esigenze specifiche dell'applicazione, tenendo anche conto delle prestazioni e della complessità di gestione delle diverse strutture, senza limitarsi alle due operazioni analizzate in questa relazione.
+
+\newpage
+\section{Appendice - Tabelle delle misurazioni}
+
+Tutte le misurazioni effettuate sono disponibili nella \anchor{repository Github}{https://github.com/albbus-stack/lab-alg} in formato \verb|.csv| e anche in formato tabulare in \verb|.tex|. Le tabelle in formato \verb|csv| sono comodamente consultabili tramite l'interfaccia utente di Github, quelle in \TeX\ sono rese disponibili per essere inserite in qualunque documento.
+
+\subsection{Dimensioni ridotte}
+
+\anchor{Grafico lista ordinata (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/lista-ordinata-s.png} \label{label:lista-ordinata-s}
+\newline
+\anchor{Grafico lista ordinata (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/lista-ordinata-s-float.png} \label{label:lista-ordinata-s-float}
+\newline
+\anchor{Grafico ABR (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/abr-s.png} \label{label:abr-s}
+\newline
+\anchor{Grafico ABR (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/abr-s-float.png} \label{label:abr-s-float}
+\newline
+\anchor{Grafico albero RN aumentato (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/rn-aumentato-s.png} \label{label:rn-aumentato-s}
+\newline
+\anchor{Grafico albero RN aumentato (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/rn-aumentato-s-float.png} \label{label:rn-aumentato-s-float}
 
 \newpage
 
-\twocolumn
-\section{Tabelle}
-\vspace{2.75em}
-\input{tabelle-lista-ordinata}
-\input{tabelle-abr}
-\input{tabelle-rn-aumentato}
+\noindent
+\anchor{Tabella Os-select in una lista ordinata (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-s-os-select.csv} \label{label:lista-ordinata-s-os-select}
+\newline
+\anchor{Tabella Os-select in una lista ordinata (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-s-float-os-select.csv} \label{label:lista-ordinata-s-float-os-select}
+\newline
+\anchor{Tabella Os-select in un ABR (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-s-os-select.csv} \label{label:abr-s-os-select}
+\newline
+\anchor{Tabella Os-select in un ABR (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-s-float-os-select.csv} \label{label:abr-s-float-os-select}
+\newline
+\anchor{Tabella Os-select in un albero RN aumentato (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-s-os-select.csv} \label{label:rn-aumentato-s-os-select}
+\newline
+\anchor{Tabella Os-select in un albero RN aumentato (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-s-float-os-select.csv} \label{label:rn-aumentato-s-float-os-select}
+
+\newpage
+
+\noindent
+\anchor{Tabella Os-rank in una lista ordinata (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-s-os-rank.csv} \label{label:lista-ordinata-s-os-rank}
+\newline
+\anchor{Tabella Os-rank in una lista ordinata (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-s-float-os-rank.csv} \label{label:lista-ordinata-s-float-os-rank}
+\newline
+\anchor{Tabella Os-rank in un ABR (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-s-os-rank.csv} \label{label:abr-s-os-rank}
+\newline
+\anchor{Tabella Os-rank in un ABR (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-s-float-os-rank.csv} \label{label:abr-s-float-os-rank}
+\newline
+\anchor{Tabella Os-rank in un albero RN aumentato (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-s-os-rank.csv} \label{label:rn-aumentato-s-os-rank}
+\newline
+\anchor{Tabella Os-rank in un albero RN aumentato (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-s-float-os-rank.csv} \label{label:rn-aumentato-s-float-os-rank}
+
+\newpage
+\subsection{Dimensioni medie}
+
+\anchor{Grafico lista ordinata (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/lista-ordinata-m.png} \label{label:lista-ordinata-m}
+\newline
+\anchor{Grafico lista ordinata (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/lista-ordinata-m-float.png} \label{label:lista-ordinata-m-float}
+\newline
+\anchor{Grafico ABR (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/abr-m.png} \label{label:abr-m}
+\newline
+\anchor{Grafico ABR (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/abr-m-float.png} \label{label:abr-m-float}
+\newline
+\anchor{Grafico albero RN aumentato (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/rn-aumentato-m.png} \label{label:rn-aumentato-m}
+\newline
+\anchor{Grafico albero RN aumentato (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/rn-aumentato-m-float.png} \label{label:rn-aumentato-m-float}
+
+\newpage
+
+\noindent
+\anchor{Tabella Os-select in una lista ordinata (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-m-os-select.csv} \label{label:lista-ordinata-m-os-select}
+\newline
+\anchor{Tabella Os-select in una lista ordinata (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-m-float-os-select.csv} \label{label:lista-ordinata-m-float-os-select}
+\newline
+\anchor{Tabella Os-select in un ABR (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-m-os-select.csv} \label{label:abr-m-os-select}
+\newline
+\anchor{Tabella Os-select in un ABR (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-m-float-os-select.csv} \label{label:abr-m-float-os-select}
+\newline
+\anchor{Tabella Os-select in un albero RN aumentato (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-m-os-select.csv} \label{label:rn-aumentato-m-os-select}
+\newline
+\anchor{Tabella Os-select in un albero RN aumentato (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-m-float-os-select.csv} \label{label:rn-aumentato-m-float-os-select}
+
+\newpage
+
+\noindent
+\anchor{Tabella Os-rank in una lista ordinata (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-m-os-rank.csv} \label{label:lista-ordinata-m-os-rank}
+\newline
+\anchor{Tabella Os-rank in una lista ordinata (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-m-float-os-rank.csv} \label{label:lista-ordinata-m-float-os-rank}
+\newline
+\anchor{Tabella Os-rank in un ABR (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-m-os-rank.csv} \label{label:abr-m-os-rank}
+\newline
+\anchor{Tabella Os-rank in un ABR (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-m-float-os-rank.csv} \label{label:abr-m-float-os-rank}
+\newline
+\anchor{Tabella Os-rank in un albero RN aumentato (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-m-os-rank.csv} \label{label:rn-aumentato-m-os-rank}
+\newline
+\anchor{Tabella Os-rank in un albero RN aumentato (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-m-float-os-rank.csv} \label{label:rn-aumentato-m-float-os-rank}
+
+\newpage
+\subsection{Dimensioni elevate}
+
+\anchor{Grafico lista ordinata (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/lista-ordinata-l.png} \label{label:lista-ordinata-l}
+\newline
+\anchor{Grafico lista ordinata (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/lista-ordinata-l-float.png} \label{label:lista-ordinata-l-float}
+\newline
+\anchor{Grafico ABR (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/abr-l.png} \label{label:abr-l}
+\newline
+\anchor{Grafico ABR (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/abr-l-float.png} \label{label:abr-l-float}
+\newline
+\anchor{Grafico albero RN aumentato (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/rn-aumentato-l.png} \label{label:rn-aumentato-l}
+\newline
+\anchor{Grafico albero RN aumentato (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/images/plots/small/rn-aumentato-l-float.png} \label{label:rn-aumentato-l-float}
+
+\newpage
+
+\noindent
+\anchor{Tabella Os-select in una lista ordinata (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-l-os-select.csv} \label{label:lista-ordinata-l-os-select}
+\newline
+\anchor{Tabella Os-select in una lista ordinata (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-l-float-os-select.csv} \label{label:lista-ordinata-l-float-os-select}
+\newline
+\anchor{Tabella Os-select in un ABR (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-l-os-select.csv} \label{label:abr-l-os-select}
+\newline
+\anchor{Tabella Os-select in un ABR (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-l-float-os-select.csv} \label{label:abr-l-float-os-select}
+\newline
+\anchor{Tabella Os-select in un albero RN aumentato (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-l-os-select.csv} \label{label:rn-aumentato-l-os-select}
+\newline
+\anchor{Tabella Os-select in un albero RN aumentato (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-l-float-os-select.csv} \label{label:rn-aumentato-l-float-os-select}
+
+\newpage
+
+\noindent
+\anchor{Tabella Os-rank in una lista ordinata (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-l-os-rank.csv} \label{label:lista-ordinata-l-os-rank}
+\newline
+\anchor{Tabella Os-rank in una lista ordinata (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-lista-ordinata-l-float-os-rank.csv} \label{label:lista-ordinata-l-float-os-rank}
+\newline
+\anchor{Tabella Os-rank in un ABR (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-l-os-rank.csv} \label{label:abr-l-os-rank}
+\newline
+\anchor{Tabella Os-rank in un ABR (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-abr-l-float-os-rank.csv} \label{label:abr-l-float-os-rank}
+\newline
+\anchor{Tabella Os-rank in un albero RN aumentato (int)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-l-os-rank.csv} \label{label:rn-aumentato-l-os-rank}
+\newline
+\anchor{Tabella Os-rank in un albero RN aumentato (float)}{https://github.com/albbus-stack/lab-alg/blob/main/latex/small-tables/tabelle-rn-aumentato-l-float-os-rank.csv} \label{label:rn-aumentato-l-float-os-rank}
 
 \end{document}
