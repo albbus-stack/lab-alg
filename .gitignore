@@ -2,5 +2,5 @@
 **/.mypy_cache
 **/venv
 
-scripts/latex
-scripts/images
+esercizioB/latex
+esercizioB/images
